@@ -8,8 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ElectronicPatientCardApplication {
 
     public static void main(String[] args) {
-        TestService testService = new TestService();
-        testService.doTest();
         SpringApplication.run(ElectronicPatientCardApplication.class, args);
     }
 
