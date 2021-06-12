@@ -16,7 +16,11 @@
 
 <table>
   <tr>
-    <th colspan="2" th:text="${patient.getName()}"></th>
+    <th colspan="2">Patient</th>
+  </tr>
+  <tr>
+    <th>Name</th>
+    <td th:text="${patient.getName()}"></td>
   </tr>
   <tr>
     <th>Id</th>
@@ -33,14 +37,19 @@
   <tr>
     <th colspan="2">Identifiers</th>
   </tr>
-<!--  <tr th:each="identifier, stat : ${patient.getIdentifier()}">
-
-  </tr>-->
+  <tr>
+    <th>Code</th>
+    <th>Full name</th>
+  </tr>
+  <tr th:each="identifier: ${patient.getIdentifier()}">
+    <td th:text="${identifier.getValue()}"></td>
+    <td th:text="${identifier.getText()}"></td>
+  </tr>
 </table>
 
 <table>
   <tr>
-    <th></th>
+    <th>Observations</th>
   </tr>
 </table>
 

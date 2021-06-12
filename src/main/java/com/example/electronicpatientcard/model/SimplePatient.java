@@ -2,6 +2,8 @@ package com.example.electronicpatientcard.model;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class SimplePatient {
 
@@ -10,9 +12,9 @@ public class SimplePatient {
     private String name;
     private String gender;
     private String birthDate;
-    private String identifier;
+    private List<SimpleIdentifier> identifier;
 
-    public SimplePatient(String id, String url, String name, String gender, String birthDate, String identifier) {
+    public SimplePatient(String id, String url, String name, String gender, String birthDate, List<SimpleIdentifier> identifier) {
         this.id = id;
         this.url = url;
         this.name = name;

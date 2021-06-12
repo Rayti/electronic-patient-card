@@ -1,9 +1,13 @@
 package com.example.electronicpatientcard.services;
 
 import com.example.electronicpatientcard.constants.Constant;
+import com.example.electronicpatientcard.model.SimpleIdentifier;
 import com.example.electronicpatientcard.model.SimplePatient;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PatientConverter {
@@ -30,9 +34,10 @@ public class PatientConverter {
         return patient.getBirthDate() != null ? patient.getBirthDate().toString() : Constant.EMPTY_VALUE;
     }
 
-    //TODO
-    private String getIdentifier(Patient patient){
-        return Constant.EMPTY_VALUE;
+    private List<SimpleIdentifier> getIdentifier(Patient patient){
+        return patient.getIdentifier().stream()
+                .map(identifier -> new SimpleIdentifier(identifier.getType().getText(), identifier.getValue()))
+                .collect(Collectors.toList());
     }
 
     public SimplePatient convertPatientToSimplePatient(Patient patient){
