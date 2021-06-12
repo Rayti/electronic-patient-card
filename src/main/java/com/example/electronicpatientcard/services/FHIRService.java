@@ -1,11 +1,10 @@
 package com.example.electronicpatientcard.services;
 
 import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.primitive.IdDt;
+
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.example.electronicpatientcard.constants.Constant;
-import com.example.electronicpatientcard.model.SimplePatient;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Service;
 

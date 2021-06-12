@@ -1,5 +1,6 @@
 package com.example.electronicpatientcard.services;
 
+import com.example.electronicpatientcard.model.SimplePatient;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +42,11 @@ class FHIRServiceTest {
         List<Observation> list = new ArrayList<>();
         PatientConverter converter = new PatientConverter();
 
-        fhirService.getAllPatients().forEach(patient -> list.addAll(fhirService.getObservations(converter.convertPatientToSimplePatient(patient).getUrl())));
+        fhirService.getAllPatients().forEach(patient -> {
+            SimplePatient simplePatient = converter.convertPatientToSimplePatient(patient);
+            System.out.println(simplePatient);
+        });
+        //fhirService.getAllPatients().forEach(patient -> list.addAll(fhirService.getObservations(converter.convertPatientToSimplePatient(patient).getUrl())));
         System.out.println("num of observations = " + list.size());
     }
 
