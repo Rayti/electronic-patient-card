@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/mystyle.css"/>
+  <link rel="stylesheet" href="/menuStyle.css">
+  <link rel="stylesheet" href="/dataStyle.css">
+  <title>Information</title>
+</head>
+<body>
+<h1><a th:href="@{/}">Electronic Patient Card</a></h1>
+
+
+<h3><a th:href="@{/patients}">Patients</a></h3>
+
+
+<table>
+  <tr>
+    <th>No.</th>
+    <th>Name</th>
+    <th>Gender</th>
+    <th>Birth date</th>
+    <th>Identifier</th>
+  </tr>
+  <tr>
+    <td>MY NUMBER</td>
+    <td>MY NAME</td>
+    <td>MY GENDER</td>
+    <td>MY BIRTH DATE</td>
+    <td> MY IDENTIFIER</td>
+  </tr>
+</table>
+
+</body>
+</html>

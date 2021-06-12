@@ -7,18 +7,20 @@ import org.springframework.stereotype.Service;
 public class PatientService {
 
     public String getFullName(Patient patient){
-
-        return "";
+        StringBuilder stringBuilder = new StringBuilder();
+        patient.getName().forEach(humanName -> stringBuilder.append(humanName.getNameAsSingleString()));
+        return stringBuilder.toString();
     }
 
     public String getGender(Patient patient){
-        return "";
+        return patient.getGender().getDisplay();
     }
 
     public String getBirthDate(Patient patient){
-        return "";
+        return patient.getBirthDate().toString();
     }
 
+    //TODO
     public String getIdentifier(Patient patient){
         return "";
     }
