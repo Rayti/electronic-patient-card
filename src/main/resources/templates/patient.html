@@ -2,9 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/mystyle.css"/>
-  <link rel="stylesheet" href="/menuStyle.css">
-  <link rel="stylesheet" href="/dataStyle.css">
+  <link rel="stylesheet" href="/styles.css"/>
   <title>Information</title>
 </head>
 <body>
@@ -49,8 +47,34 @@
 
 <table>
   <tr>
-    <th>Observations</th>
+    <th colspan="2">Observations</th>
   </tr>
+  <th:block th:each="obs : ${observations}">
+    <tr>
+      <th>Id</th>
+      <td th:text="${obs.getId()}"></td>
+    </tr>
+    <tr>
+      <th colspan="2">Value quantity</th>
+    </tr>
+    <tr>
+      <th>Value</th>
+      <th>Unit</th>
+    </tr>
+    <tr>
+      <td th:text="${obs.getSimpleValueQuantity().getValue()}"></td>
+      <td th:text="${obs.getSimpleValueQuantity().getUnit()}"></td>
+    </tr>
+    <tr>
+      <th>Code</th>
+      <th>Display</th>
+    </tr>
+    <tr th:each="coding : ${obs.getCodingDisplays()}">
+      <td th:text="${coding.getCode()}"></td>
+      <td th:text="${coding.getDisplay()}"></td>
+    </tr>
+
+  </th:block>
 </table>
 
 

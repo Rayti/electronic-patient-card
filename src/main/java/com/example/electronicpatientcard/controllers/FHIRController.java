@@ -76,6 +76,7 @@ public class FHIRController {
                     .collect(Collectors.toList());
             model.addAttribute("observations", simpleObservations);
             model.addAttribute("patient", patient);
+            logger.info(String.valueOf(simpleObservations.size()));
             return "patient";
         }
         model.addAttribute("msg", "Patient does not exist - server must habe been updated.");

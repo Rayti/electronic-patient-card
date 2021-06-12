@@ -8,10 +8,12 @@ import java.util.List;
 @Data
 public class SimpleObservation {
 
-    private List<String> codingDisplays;
+    private String id;
+    private List<SimpleCodingDisplay> codingDisplays;
     private SimpleValueQuantity simpleValueQuantity;
 
-    public SimpleObservation(List<String> codingDisplays, SimpleValueQuantity simpleValueQuantity) {
+    public SimpleObservation(String id, List<SimpleCodingDisplay> codingDisplays, SimpleValueQuantity simpleValueQuantity) {
+        this.id = id;
         this.codingDisplays = codingDisplays;
         this.simpleValueQuantity = simpleValueQuantity;
     }

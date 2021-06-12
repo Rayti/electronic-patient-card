@@ -39,7 +39,9 @@ class FHIRServiceTest {
     void getObservations() {
 
         List<Observation> list = new ArrayList<>();
-        //fhirService.getAllPatients().forEach(patient -> list.addAll(fhirService.getObservations(patient)));
+        PatientConverter converter = new PatientConverter();
+
+        fhirService.getAllPatients().forEach(patient -> list.addAll(fhirService.getObservations(converter.convertPatientToSimplePatient(patient).getUrl())));
         System.out.println("num of observations = " + list.size());
     }
 
