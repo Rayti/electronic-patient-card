@@ -2,6 +2,7 @@ package com.example.electronicpatientcard.services;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import com.example.electronicpatientcard.model.SimplePatient;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.MedicationStatement;
 import org.hl7.fhir.r4.model.Observation;
@@ -50,6 +51,7 @@ public class FHIRService {
     }
 
     public Observation getObservation(Patient patient){
+
         return null;
     }
 

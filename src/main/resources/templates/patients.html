@@ -22,12 +22,12 @@
     <th>Birth date</th>
     <th>Identifier</th>
   </tr>
-  <tr>
-    <td>MY NUMBER</td>
-    <td>MY NAME</td>
-    <td>MY GENDER</td>
-    <td>MY BIRTH DATE</td>
-    <td> MY IDENTIFIER</td>
+  <tr th:each="patient, stat : ${patients}">
+    <td th:text="${stat.count}"></td>
+    <td th:text="${patient.getName()}"></td>
+    <td th:text="${patient.getGender()}"></td>
+    <td th:text="${patient.getBirthDate()}"></td>
+    <td th:text="${patient.getIdentifier()}"></td>
   </tr>
 </table>
 
