@@ -2,7 +2,7 @@ package com.example.electronicpatientcard.controllers;
 
 import com.example.electronicpatientcard.model.SimplePatient;
 import com.example.electronicpatientcard.services.FHIRService;
-import com.example.electronicpatientcard.services.PatientService;
+import com.example.electronicpatientcard.services.PatientConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,12 +16,12 @@ public class FHIRController {
 
 
     FHIRService fhirService;
-    PatientService patientService;
+    PatientConverter patientConverter;
 
     @Autowired
-    public FHIRController(FHIRService fhirService, PatientService patientService) {
+    public FHIRController(FHIRService fhirService, PatientConverter patientConverter) {
         this.fhirService = fhirService;
-        this.patientService = patientService;
+        this.patientConverter = patientConverter;
     }
 
     @GetMapping("/")
@@ -33,7 +33,7 @@ public class FHIRController {
     public String patientsView(Model model){
 
         List<SimplePatient> simplePatientList = fhirService.getAllPatients().stream()
-                .map(patient -> patientService.convertPatientToSimplePatient(patient))
+                .map(patient -> patientConverter.convertPatientToSimplePatient(patient))
                 .collect(Collectors.toList());
 
         SimplePatient debugPatient = simplePatientList.get(0);
