@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,12 +38,18 @@ public class FHIRController {
                 .map(patient -> patientConverter.convertPatientToSimplePatient(patient))
                 .collect(Collectors.toList());
 
-        SimplePatient debugPatient = simplePatientList.get(0);
-        System.out.println(debugPatient);
-
         model.addAttribute("patients", simplePatientList);
 
         return "patients";
+    }
+
+    @GetMapping("/patient/{name}")
+    public String patientView(@PathVariable String name, Model model){
+
+
+
+
+        return "patient";
     }
 
 

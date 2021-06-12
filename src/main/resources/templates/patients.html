@@ -17,6 +17,7 @@
 <table>
   <tr>
     <th>No.</th>
+    <th>Id</th>
     <th>Name</th>
     <th>Gender</th>
     <th>Birth date</th>
@@ -24,6 +25,7 @@
   </tr>
   <tr th:each="patient, stat : ${patients}">
     <td th:text="${stat.count}"></td>
+    <td th:text="${patient.getId()}"></td>
     <td th:text="${patient.getName()}"></td>
     <td th:text="${patient.getGender()}"></td>
     <td th:text="${patient.getBirthDate()}"></td>

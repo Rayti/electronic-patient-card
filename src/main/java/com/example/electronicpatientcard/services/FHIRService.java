@@ -1,13 +1,12 @@
 package com.example.electronicpatientcard.services;
 
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.example.electronicpatientcard.constants.Constant;
 import com.example.electronicpatientcard.model.SimplePatient;
-import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.MedicationStatement;
-import org.hl7.fhir.r4.model.Observation;
-import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,9 +50,17 @@ public class FHIRService {
         return result.getEntry().size() > 0 ? (Patient)result.getEntry().get(0).getResource() : null;
     }
 
-    public Observation getObservation(Patient patient){
+    public List<Observation> getObservations(Patient patient){
+        Bundle result = client
+                .search()
+                .forResource(Observation.class)
+                .where(new StringClientParam("patient").matches().value("http://hapi.fhir.org/baseR4/Patient/1109173/_history/1"))
+                .returnBundle(Bundle.class)
+                .execute();
 
-        return null;
+        return result.getEntry().stream()
+                .map(bundleEntryComponent -> (Observation)bundleEntryComponent.getResource())
+                .collect(Collectors.toList());
     }
 
     public MedicationStatement getMedicationStatement(Patient patient){
