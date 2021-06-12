@@ -21,7 +21,6 @@
     <th>Name</th>
     <th>Gender</th>
     <th>Birth date</th>
-    <th>Identifier</th>
   </tr>
   <tr th:each="patient, stat : ${patients}">
     <td th:text="${stat.count}"></td>
@@ -29,8 +28,8 @@
     <td th:text="${patient.getName()}"></td>
     <td th:text="${patient.getGender()}"></td>
     <td th:text="${patient.getBirthDate()}"></td>
-    <td th:text="${patient.getIdentifier()}"></td>
-    <td><a th:href="@{/}">Select</a></td>
+    <td><a th:href="@{/patient/{id}(id=${patient.getId()})}">Select</a>
+    </td>
   </tr>
 </table>
 

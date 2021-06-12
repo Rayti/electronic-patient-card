@@ -50,11 +50,11 @@ public class FHIRService {
         return result.getEntry().size() > 0 ? (Patient)result.getEntry().get(0).getResource() : null;
     }
 
-    public List<Observation> getObservations(Patient patient){
+    public List<Observation> getObservations(String url){
         Bundle result = client
                 .search()
                 .forResource(Observation.class)
-                .where(new StringClientParam("patient").matches().value("http://hapi.fhir.org/baseR4/Patient/1109173/_history/1"))
+                .where(new StringClientParam("patient").matches().value(url))
                 .returnBundle(Bundle.class)
                 .execute();
 

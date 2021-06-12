@@ -21,6 +21,10 @@ class FHIRServiceTest {
     @Test
     void getAllPatients() {
         List<Patient> patients = fhirService.getAllPatients();
+        System.out.println(patients.get(0).getId());
+        System.out.println(patients.get(0).getIdBase());
+        System.out.println(patients.get(0).getIdElement().getIdPart());
+
 
 
     }
@@ -35,7 +39,7 @@ class FHIRServiceTest {
     void getObservations() {
 
         List<Observation> list = new ArrayList<>();
-        fhirService.getAllPatients().forEach(patient -> list.addAll(fhirService.getObservations(patient)));
+        //fhirService.getAllPatients().forEach(patient -> list.addAll(fhirService.getObservations(patient)));
         System.out.println("num of observations = " + list.size());
     }
 

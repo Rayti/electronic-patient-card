@@ -15,7 +15,35 @@
 
 
 <table>
+  <tr>
+    <th colspan="2" th:text="${patient.getName()}"></th>
+  </tr>
+  <tr>
+    <th>Id</th>
+    <td th:text="${patient.getId()}"></td>
+  </tr>
+  <tr>
+    <th>Gender</th>
+    <td th:text="${patient.getGender()}"></td>
+  </tr>
+  <tr>
+    <th>Birth date</th>
+    <td th:text="${patient.getBirthDate()}"></td>
+  </tr>
+  <tr>
+    <th colspan="2">Identifiers</th>
+  </tr>
+<!--  <tr th:each="identifier, stat : ${patient.getIdentifier()}">
+
+  </tr>-->
 </table>
+
+<table>
+  <tr>
+    <th></th>
+  </tr>
+</table>
+
 
 </body>
 </html>

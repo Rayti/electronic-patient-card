@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/mystyle.css"/>
+  <link rel="stylesheet" href="/menuStyle.css">
+  <link rel="stylesheet" href="/dataStyle.css">
+  <title>Information</title>
+</head>
+<body>
+<h1><a th:href="@{/}">Electronic Patient Card</a></h1>
+
+
+<h3><a th:href="@{/patients}">Patients</a></h3>
+
+<h1>Error</h1>
+<h1 th:text="${msg}"></h1>
+
+<h2>Hey Hey Hello!</h2>
+</body>
+</html>

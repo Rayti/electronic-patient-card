@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 public class PatientConverter {
 
     private String getId(Patient patient){
+        return patient.getIdElement().getIdPart();
+    }
+
+    private String getUrl(Patient patient) {
         return patient.getId();
     }
 
@@ -35,6 +39,7 @@ public class PatientConverter {
 
         return new SimplePatient(
                 getId(patient),
+                getUrl(patient),
                 getFullName(patient),
                 getGender(patient),
                 getBirthDate(patient),
