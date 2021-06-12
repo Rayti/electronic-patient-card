@@ -69,11 +69,6 @@
       <th>Code</th>
       <th>Display</th>
     </tr>
-    <tr th:each="coding : ${obs.getCodingDisplays()}">
-      <td th:text="${coding.getCode()}"></td>
-      <td th:text="${coding.getDisplay()}"></td>
-    </tr>
-
   </th:block>
 </table>
 
