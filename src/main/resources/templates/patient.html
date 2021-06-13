@@ -24,14 +24,11 @@
 
 <h2><a th:href="@{/patients}">Patients</a></h2>
 
-<!--
-th:onclick="@{window.location='/patient/{id}'(id=${patient.getId()})}">
--->
-  <form th:action="@{'{id}'(id=${patient.getId()})}" method="get">
-    <input type="date"  id="start" name="start">
-    <input type="date" id="end" name="end">
-    <input type="submit">
-  </form>
+<form th:action="@{'{id}'(id=${patient.getId()})}" method="get">
+  <input type="date"  id="start" name="start">
+  <input type="date" id="end" name="end">
+  <input type="submit">
+</form>
 
 <table>
   <tr>
