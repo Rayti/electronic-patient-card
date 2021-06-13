@@ -20,10 +20,13 @@
 
 </header>
 
-
+<div id="nav">
 <h2><a th:href="@{/patients}">Patients</a></h2>
-
-
+<form action="/patients" method="get">
+    <input type="text"  id="name" name="name">
+    <input type="submit">
+</form>
+</div>
 <table>
     <tr>
         <th>No.</th>
