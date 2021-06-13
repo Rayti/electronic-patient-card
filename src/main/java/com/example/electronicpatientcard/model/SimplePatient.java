@@ -1,6 +1,7 @@
 package com.example.electronicpatientcard.model;
 
 import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class SimplePatient {
 
     private String id;
     private String url;
+    @Getter
     private String name;
     private String gender;
     private String birthDate;

@@ -55,10 +55,13 @@ public class FHIRController {
     }
 
     @GetMapping("/patients")
-    public String patientsView(Model model) {
+    public String patientsView(Model model, @RequestParam(required = false) String name) {
+
         logger.info("Request GET on /patients");
+        String finalName = name==null ? "" : name;
         List<SimplePatient> simplePatientList = fhirService.getAllPatients().stream()
                 .map(patient -> patientConverter.convertPatientToSimplePatient(patient))
+                .filter(simplePatient -> simplePatient.getName().contains(finalName))
                 .collect(Collectors.toList());
 
         SimplePatientCache.updateCache(simplePatientList);
