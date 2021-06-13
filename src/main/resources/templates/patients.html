@@ -32,14 +32,12 @@
         <th>Gender</th>
         <th>Birth date</th>
     </tr>
-    <tr th:each="patient, stat : ${patients}">
+    <tr th:each="patient, stat : ${patients}" th:onclick="@{window.location='/patient/{id}'(id=${patient.getId()})}">
         <td th:text="${stat.count}"></td>
         <td th:text="${patient.getId()}"></td>
         <td th:text="${patient.getName()}"></td>
         <td th:text="${patient.getGender()}"></td>
         <td th:text="${patient.getBirthDate()}"></td>
-        <td><a th:href="@{/patient/{id}(id=${patient.getId()})}">Select</a>
-        </td>
     </tr>
 </table>
 
