@@ -1,5 +1,6 @@
 package com.example.electronicpatientcard.controllers;
 
+import com.example.electronicpatientcard.constants.Constant;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
 import com.example.electronicpatientcard.model.SimplePatientCache;
@@ -15,7 +16,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.Temporal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,13 +49,13 @@ public class FHIRController {
     }
 
     @GetMapping("/")
-    public String mainView(Model model){
+    public String mainView(Model model) {
         logger.info("Request GET on /");
         return "index";
     }
 
     @GetMapping("/patients")
-    public String patientsView(Model model){
+    public String patientsView(Model model) {
         logger.info("Request GET on /patients");
         List<SimplePatient> simplePatientList = fhirService.getAllPatients().stream()
                 .map(patient -> patientConverter.convertPatientToSimplePatient(patient))
@@ -60,9 +69,25 @@ public class FHIRController {
     }
 
     @GetMapping("/patient/{id}")
-    public String patientView(@PathVariable String id, Model model){
-        logger.info("Request GET on /patient/" + id);
-
+    public String patientView(@PathVariable String id, Model model, @RequestParam(required = false) String start,
+                              @RequestParam(required = false) String end) {
+        logger.info("Request GET on /patient/" + id + "?start = " + start + "&end=" + end);
+        DateFormat dateFormat = new SimpleDateFormat(Constant.DATE_FORMAT);
+        Date startDate, endDate;
+        // todo: make better default values for startDate&endDAte
+        try {
+            startDate = start == null ? dateFormat.parse("1970.01.01") : dateFormat.parse(start);
+        } catch (ParseException e) {
+            logger.error("Could not parse date " + start + " with format " + Constant.DATE_FORMAT);
+            startDate = Date.from(Instant.MIN);
+        }
+        try {
+            endDate = start == null ? Calendar.getInstance().getTime() : dateFormat.parse(end);
+        } catch (ParseException e) {
+            logger.error("Could not parse date " + end + " with format " + Constant.DATE_FORMAT);
+            endDate = Date.from(Instant.MIN);
+        }
+        // todo: add filtering observations and statements based on startDate and endDate
         Optional<SimplePatient> optionalSimplePatient = SimplePatientCache.getCache().stream()
                 .filter(simplePatient -> simplePatient.getId().equalsIgnoreCase(id))
                 .findFirst();
@@ -82,7 +107,6 @@ public class FHIRController {
         model.addAttribute("msg", "Patient does not exist - server must habe been updated.");
         return "error";
     }
-
 
 
 }

@@ -33,7 +33,7 @@ public class PatientConverter {
     }
 
     private String getBirthDate(Patient patient){
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        DateFormat dateFormat = new SimpleDateFormat(Constant.DATE_FORMAT);
         return patient.getBirthDate() != null ? dateFormat.format(patient.getBirthDate()) : Constant.EMPTY_VALUE;
     }
 
