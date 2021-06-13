@@ -56,7 +56,6 @@ public class FHIRController {
 
     @GetMapping("/patients")
     public String patientsView(Model model, @RequestParam(required = false) String name) {
-
         logger.info("Request GET on /patients");
         String finalName = name==null ? "" : name.toUpperCase();
         List<SimplePatient> simplePatientList = fhirService.getAllPatients().stream()
@@ -71,23 +70,29 @@ public class FHIRController {
         return "patients";
     }
 
+/*
+    TODO when no date provided on /patient/{id} and clicked submit -> ArithmeticException is thrown with info: "long overflow"
+        on line 90 or 96 depending on whether only start or end is passed
+*/
+
     @GetMapping("/patient/{id}")
     public String patientView(@PathVariable String id, Model model, @RequestParam(required = false) String start,
                               @RequestParam(required = false) String end) {
         logger.info("Request GET on /patient/" + id + "?start = " + start + "&end=" + end);
-        DateFormat dateFormat = new SimpleDateFormat(Constant.DATE_FORMAT);
+        String formatType = Constant.HTML_INPUT_DATE_FORMAT;
+        DateFormat dateFormat = new SimpleDateFormat(formatType);
         Date startDate, endDate;
         // todo: make better default values for startDate&endDAte
         try {
-            startDate = start == null ? dateFormat.parse("1970.01.01") : dateFormat.parse(start);
+            startDate = start == null ? dateFormat.parse(Constant.DEFAULT_START_DATE_HTML_INPUT_FORMAT) : dateFormat.parse(start);
         } catch (ParseException e) {
-            logger.error("Could not parse date " + start + " with format " + Constant.DATE_FORMAT);
+            logger.error("Could not parse date " + start + " with format " + formatType);
             startDate = Date.from(Instant.MIN);
         }
         try {
             endDate = start == null ? Calendar.getInstance().getTime() : dateFormat.parse(end);
         } catch (ParseException e) {
-            logger.error("Could not parse date " + end + " with format " + Constant.DATE_FORMAT);
+            logger.error("Could not parse date " + end + " with format " + formatType);
             endDate = Date.from(Instant.MIN);
         }
         // todo: add filtering observations and statements based on startDate and endDate
