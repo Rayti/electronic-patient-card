@@ -6,6 +6,8 @@ import com.example.electronicpatientcard.model.SimplePatient;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +33,8 @@ public class PatientConverter {
     }
 
     private String getBirthDate(Patient patient){
-        return patient.getBirthDate() != null ? patient.getBirthDate().toString() : Constant.EMPTY_VALUE;
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        return patient.getBirthDate() != null ? dateFormat.format(patient.getBirthDate()) : Constant.EMPTY_VALUE;
     }
 
     private List<SimpleIdentifier> getIdentifier(Patient patient){
