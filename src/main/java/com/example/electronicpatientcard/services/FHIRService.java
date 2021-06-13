@@ -21,7 +21,7 @@ public class FHIRService {
 
     public FHIRService() {
         this.context = FhirContext.forR4();
-        this.serverBase = Constant.SERVER_URL_R4;
+        this.serverBase = Constant.REMOTE_SERVER_URL_R4;
         this.client = context.newRestfulGenericClient(serverBase);
     }
 
