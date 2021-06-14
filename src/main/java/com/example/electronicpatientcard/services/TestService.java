@@ -2,6 +2,7 @@ package com.example.electronicpatientcard.services;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import com.example.electronicpatientcard.constants.Constant;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
 
@@ -10,7 +11,7 @@ public class TestService {
     public void doTest() {
         FhirContext context = FhirContext.forR4();
 
-        String serverBase = "http://hapi.fhir.org/baseR4";
+        String serverBase = Constant.LOCAL_SERVER_URL_R4;
 
         IGenericClient client = context.newRestfulGenericClient(serverBase);
 
