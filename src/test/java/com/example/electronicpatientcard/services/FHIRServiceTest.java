@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.example.electronicpatientcard.constants.Constant;
 import com.example.electronicpatientcard.model.SimplePatient;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,11 +25,16 @@ class FHIRServiceTest {
         fhirService = new FHIRService();
     }
 
+
     @Test
-    void check(){
+    void checkMedicationRequests(){
+    }
+
+    @Test
+    void checkObservations(){
 
         FhirContext context = FhirContext.forR4();
-        String serverBase = Constant.REMOTE_SERVER_URL_R4;
+        String serverBase = Constant.LOCAL_SERVER_URL_R4;
         IGenericClient client = context.newRestfulGenericClient(serverBase);
 
         PatientConverter patientConverter = new PatientConverter();
@@ -55,12 +61,22 @@ class FHIRServiceTest {
         });
 
 
+        List<Observation> observations = new ArrayList<>();
+
+        result2.getEntry().forEach(bundleEntryComponent -> {
+            Observation observation = (Observation)bundleEntryComponent.getResource();
+            observations.add(observation);
+        });
+
+
+
         List<String> answers = new ArrayList<>();
 
         simplePatients.forEach(simplePatient -> {
             System.out.println(simplePatient.getUrl());
             client.search().forResource(Observation.class)
-                    .where(new StringClientParam("patient").matches().value(simplePatient.getUrl()))
+                    //.where(new StringClientParam("patient").matches().value(simplePatient.getUrl()))
+                    .where(Observation.SUBJECT.hasId("Patient/" + simplePatient.getId()))
                     .returnBundle(Bundle.class)
                     .execute()
                     .getEntry()
@@ -72,52 +88,30 @@ class FHIRServiceTest {
 
         });
 
-        System.out.println("PATIENTS IDS ############################################");
+        System.out.println("PATIENTS IDS ############################################ SIZE = " + simplePatients.size());
 
 
-        simplePatients.forEach(simplePatient -> System.out.println(simplePatient.getId()));
+        simplePatients.forEach(simplePatient -> System.out.println(simplePatient.getId() + "; " + simplePatient.getUrl()));
 
-        System.out.println("PATIENTS AND THEIR OBSERVATIONS ############################################");
+        System.out.println("PATIENTS AND THEIR OBSERVATIONS ############################################ SIZE = " + answers.size());
         answers.forEach(System.out::println);
 
 
-        System.out.println("OBSERVATIONS ############################################");
+        System.out.println("OBSERVATIONS ############################################ SIZE = " + observations.size());
 
-        result2.getEntry().forEach(bundleEntryComponent -> {
-            Observation observation = (Observation)bundleEntryComponent.getResource();
-            System.out.println(observation.getId());
-        });
+        observations.forEach(observation -> System.out.println(observation.getSubject().getReference() + "; " + observation.getId()));
     }
 
     @Test
     void getAllPatients() {
-        List<Patient> patients = fhirService.getAllPatients();
-        System.out.println(patients.get(0).getId());
-        System.out.println(patients.get(0).getIdBase());
-        System.out.println(patients.get(0).getIdElement().getIdPart());
-
-
-
     }
 
     @Test
     void getPatientByName() {
-
-
     }
 
     @Test
     void getObservations() {
-
-        List<Observation> list = new ArrayList<>();
-        PatientConverter converter = new PatientConverter();
-
-        fhirService.getAllPatients().forEach(patient -> {
-            SimplePatient simplePatient = converter.convertPatientToSimplePatient(patient);
-            System.out.println(simplePatient);
-        });
-        //fhirService.getAllPatients().forEach(patient -> list.addAll(fhirService.getObservations(converter.convertPatientToSimplePatient(patient).getUrl())));
-        System.out.println("num of observations = " + list.size());
     }
 
     @Test

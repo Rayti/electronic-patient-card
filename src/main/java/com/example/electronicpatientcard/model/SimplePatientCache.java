@@ -1,6 +1,5 @@
 package com.example.electronicpatientcard.model;
 
-import ca.uhn.fhir.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,11 +13,13 @@ public class SimplePatientCache {
     private static List<SimplePatient> cache = new ArrayList<>();
 
     public static void updateCache(List<SimplePatient> simplePatients){
-        logger.info("Cache updated");
+        logger.info("SimplePatientCache updated");
         cache = simplePatients;
     }
+
 
     public static List<SimplePatient> getCache(){
         return cache;
     }
+
 }
