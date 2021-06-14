@@ -1,13 +1,15 @@
 package com.example.electronicpatientcard.controllers;
 
 import com.example.electronicpatientcard.constants.Constant;
+import com.example.electronicpatientcard.model.SimpleMedicationRequest;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
-import com.example.electronicpatientcard.model.Cache;
+import com.example.electronicpatientcard.model.SimplePatientCache;
 import com.example.electronicpatientcard.services.FHIRService;
+import com.example.electronicpatientcard.services.MedicationRequestConverter;
 import com.example.electronicpatientcard.services.ObservationConverter;
 import com.example.electronicpatientcard.services.PatientConverter;
-import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.MedicationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,16 +33,19 @@ public class FHIRController {
     FHIRService fhirService;
     PatientConverter patientConverter;
     ObservationConverter observationConverter;
+    MedicationRequestConverter medicationRequestConverter;
 
     Logger logger = LoggerFactory.getLogger(FHIRController.class);
 
     @Autowired
     public FHIRController(FHIRService fhirService,
                           PatientConverter patientConverter,
-                          ObservationConverter observationConverter) {
+                          ObservationConverter observationConverter,
+                          MedicationRequestConverter medicationRequestConverter) {
         this.fhirService = fhirService;
         this.patientConverter = patientConverter;
         this.observationConverter = observationConverter;
+        this.medicationRequestConverter = medicationRequestConverter;
     }
 
     @GetMapping("/")
@@ -58,7 +63,7 @@ public class FHIRController {
                 .filter(simplePatient -> simplePatient.getName().toUpperCase().contains(finalName))
                 .collect(Collectors.toList());
 
-        Cache.updateSimplePatientCache(simplePatientList);
+        SimplePatientCache.updateCache(simplePatientList);
 
         model.addAttribute("patients", simplePatientList);
 
@@ -93,7 +98,7 @@ public class FHIRController {
             endDate = Date.from(Instant.MIN);
         }
         // todo: add filtering observations and statements based on startDate and endDate
-        Optional<SimplePatient> optionalSimplePatient = Cache.getSimplePatientCache().stream()
+        Optional<SimplePatient> optionalSimplePatient = SimplePatientCache.getCache().stream()
                 .filter(simplePatient -> simplePatient.getId().equalsIgnoreCase(id))
                 .findFirst();
 
@@ -104,12 +109,18 @@ public class FHIRController {
                     .stream()
                     .map(observation -> observationConverter.convertObservationToSimpleObservation(observation))
                     .collect(Collectors.toList());
+            List<SimpleMedicationRequest> medicationRequests = fhirService
+                    .getMedicationRequest(patient.getId())
+                    .stream()
+                    .map(medicationRequest -> medicationRequestConverter.convertMedicationRequestToSimpleMedicationRequest(medicationRequest))
+                    .collect(Collectors.toList());
+            model.addAttribute("medications", medicationRequests);
             model.addAttribute("observations", simpleObservations);
             model.addAttribute("patient", patient);
             logger.info(String.valueOf(simpleObservations.size()));
             return "patient";
         }
-        model.addAttribute("msg", "Patient does not exist - server must habe been updated.");
+        model.addAttribute("msg", "Patient does not exist - server must have been updated.");
         return "error";
     }
 
@@ -122,7 +133,7 @@ public class FHIRController {
                 .map(patient -> patientConverter.convertPatientToSimplePatient(patient))
                 .collect(Collectors.toList());
 
-        Cache.updateSimplePatientCache(simplePatientList);
+        SimplePatientCache.updateCache(simplePatientList);
 
         List<String> patientsWithObservations = new ArrayList<>();
 

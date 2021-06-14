@@ -87,6 +87,20 @@
   </tr>
 </table>
 
+<table>
+  <tr>
+    <th colspan="2">Medication requests</th>
+  </tr>
+  <tr>
+    <th>No</th>
+    <th>Display</th>
+  </tr>
+  <tr th:each="medication, stat : ${medications}">
+    <td th:text="${stat.count}"></td>
+    <td th:each="display : ${medication.displays}" th:text="${display}"></td>
+  </tr>
+</table>
+
 <br>
 </body>
 </html>

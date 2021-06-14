@@ -6,6 +6,7 @@ import ca.uhn.fhir.rest.gclient.StringClientParam;
 import com.example.electronicpatientcard.constants.Constant;
 import com.example.electronicpatientcard.model.SimplePatient;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Patient;
 import org.junit.jupiter.api.BeforeAll;
@@ -24,8 +25,18 @@ class FHIRServiceTest {
         fhirService = new FHIRService();
     }
 
+
     @Test
-    void check(){
+    void checkMedicationRequests(){
+
+        List<MedicationRequest> list = fhirService.getMedicationRequest(null);
+
+        list.forEach(medicationRequest -> System.out.println(medicationRequest.getId()));
+
+    }
+
+    @Test
+    void checkObservations(){
 
         FhirContext context = FhirContext.forR4();
         String serverBase = Constant.LOCAL_SERVER_URL_R4;

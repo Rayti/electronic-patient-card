@@ -62,8 +62,18 @@ public class FHIRService {
                 .collect(Collectors.toList());
     }
 
-    public MedicationStatement getMedicationStatement(Patient patient){
-        return null;
+
+    public List<MedicationRequest> getMedicationRequest(String id) {
+        Bundle result = client
+                .search()
+                .forResource(MedicationRequest.class)
+                .where(MedicationRequest.SUBJECT.hasId("Patient/" + id))
+                .returnBundle(Bundle.class)
+                .execute();
+
+        return result.getEntry().stream()
+                .map(bundleEntryComponent -> (MedicationRequest)bundleEntryComponent.getResource())
+                .collect(Collectors.toList());
     }
 
 
