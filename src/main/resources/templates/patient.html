@@ -65,37 +65,28 @@
 
 <table>
   <tr>
-    <th colspan="2">Observations</th>
+    <th colspan="5">Observations</th>
   </tr>
-  <th:block th:each="obs : ${observations}">
-    <tr>
-      <th>Id</th>
-      <td th:text="${obs.getId()}"></td>
-    </tr>
-    <tr>
-      <th colspan="2">Value quantity</th>
-    </tr>
-    <tr th:if="${obs.getSimpleValueQuantity() != null}">
-      <th>Value</th>
-      <th>Unit</th>
-    </tr>
-    <tr th:if="${obs.getSimpleValueQuantity() != null}">
-      <td th:text="${obs.getSimpleValueQuantity().getValue()}"></td>
-      <td th:text="${obs.getSimpleValueQuantity().getUnit()}"></td>
-    </tr>
-    <tr>
-      <th>Code</th>
-      <th>Display</th>
-    </tr>
+  <tr>
+    <th>Id</th>
+    <th>Value</th>
+    <th>Unit</th>
+    <th>Code</th>
+    <th>Display</th>
+  </tr>
+  <tr th:each="obs : ${observations}">
+    <td th:text="${obs.getId()}"></td>
+    <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getValue()}"></td></th:block>
+    <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>NaN</td></th:block>
+    <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getUnit()}"></td></th:block>
+    <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>NaN</td></th:block>
     <th:block th:each="coding : ${obs.getCodingDisplays()}">
-        <tr>
-          <td th:text="${coding.getCode()}"></td>
-          <td th:text="${coding.getDisplay()}"></td>
-        </tr>
+      <td th:text="${coding.getCode()}"></td>
+      <td th:text="${coding.getDisplay()}"></td>
     </th:block>
-  </th:block>
+  </tr>
 </table>
 
-
+<br>
 </body>
 </html>

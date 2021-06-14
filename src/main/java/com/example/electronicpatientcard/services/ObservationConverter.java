@@ -3,8 +3,6 @@ package com.example.electronicpatientcard.services;
 import com.example.electronicpatientcard.model.SimpleCodingDisplay;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimpleValueQuantity;
-import jdk.internal.jline.internal.Nullable;
-import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Quantity;
 import org.springframework.stereotype.Service;
@@ -26,7 +24,6 @@ public class ObservationConverter {
                 .collect(Collectors.toList());
     }
 
-    @Nullable
     public SimpleValueQuantity getValueQuantity(Observation observation){
         if(observation.getValue() instanceof Quantity){
             return new SimpleValueQuantity(
