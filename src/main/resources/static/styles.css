@@ -124,6 +124,20 @@ tr:first-child {
     font-size: 4em;
 }
 
+input[type=submit] {
+    background-color: var(--prussian-blue);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover{
+    background-color: var(--celadon-blue);
+}
+
 @keyframes hover-from-right {
     0% {
         transform: translate(100px, 0px);
