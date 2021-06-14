@@ -76,6 +76,8 @@ table {
     justify-content: center;
     margin-left: auto;
     border-collapse: collapse;
+    margin-bottom: 10px;
+    margin-top: 10px;
     margin-right: auto;
     animation: fadeIn;
     animation-duration: 1s;

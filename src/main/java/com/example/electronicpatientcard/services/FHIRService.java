@@ -8,11 +8,14 @@ import com.example.electronicpatientcard.constants.Constant;
 import com.example.electronicpatientcard.model.SimpleMedicationRequest;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
+import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -50,6 +53,23 @@ public class FHIRService {
                 .collect(Collectors.toList());
     }
 
+    public SimplePatient getPatient(String id){
+        Bundle result = client
+                .search()
+                .forResource(Patient.class)
+                .where(Patient.LINK.hasId(id))
+                .returnBundle(Bundle.class)
+                .execute();
+
+        Optional<Bundle.BundleEntryComponent> optionalPatient = result.getEntry().stream().findFirst();
+
+        if (optionalPatient.isPresent()) {
+            Patient patient = (Patient)optionalPatient.get().getResource();
+            return patientConverter.convertPatientToSimplePatient(patient);
+        }
+        return null;
+    }
+
     public List<SimplePatient> getPatientsWithNames(String name){
         return this.getAllPatients().stream()
                 .filter(simplePatient -> simplePatient.getName().toUpperCase().contains(name))
@@ -69,6 +89,16 @@ public class FHIRService {
                     Observation observation = (Observation)bundleEntryComponent.getResource();
                     return observationConverter.convertObservationToSimpleObservation(observation);
                 })
+                .collect(Collectors.toList());
+    }
+
+    public List<SimpleObservation> getObservationsWithDateBoundaries(List<SimpleObservation> simpleObservations,
+                                                                     Date start,
+                                                                     Date end) {
+        return simpleObservations
+                .stream()
+                .filter(simpleObservation ->
+                        simpleObservation.getDate().after(start) && simpleObservation.getDate().before(end))
                 .collect(Collectors.toList());
     }
 

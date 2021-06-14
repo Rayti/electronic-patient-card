@@ -10,4 +10,6 @@ public class Constant {
     public static String HTML_INPUT_DATE_FORMAT = "yyyy-MM-dd";
     public static String DEFAULT_START_DATE = "1970.01.01";
     public static String DEFAULT_START_DATE_HTML_INPUT_FORMAT = "1970-01-01";
+    public static String DEFAULT_END_DATE = "2100.01.01";
+    public static String DEFAULT_END_DATE_HTML_INPUT_FORMAT = "2100-01-01";
 }
