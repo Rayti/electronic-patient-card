@@ -5,10 +5,7 @@ import com.example.electronicpatientcard.model.SimpleMedicationRequest;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
 import com.example.electronicpatientcard.model.SimplePatientCache;
-import com.example.electronicpatientcard.services.FHIRService;
-import com.example.electronicpatientcard.services.MedicationRequestConverter;
-import com.example.electronicpatientcard.services.ObservationConverter;
-import com.example.electronicpatientcard.services.PatientConverter;
+import com.example.electronicpatientcard.services.*;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +96,10 @@ public class FHIRController {
                 .filter(simplePatient -> simplePatient.getId().equalsIgnoreCase(id))
                 .findFirst();
 
+        // todo: make this code to be selected by clicking
+        List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7");
+        model.addAttribute("chartData", plottedObservations);
+
         if (optionalSimplePatient.isPresent()) {
             SimplePatient patient = optionalSimplePatient.get();
 
@@ -137,6 +138,18 @@ public class FHIRController {
         model.addAttribute("patientsWithObservations", patientsWithObservations);
 
         return "patients";
+    }
+
+    @GetMapping("/test")
+    public String testEndpoint(Model model){
+        List<SimpleObservation> l = fhirService.getObservations("5c818f3d-7051-4b86-8203-1dc624a91804");
+        List<SimpleObservation> list = fhirService.getObservations("b426b062-8273-4b93-a907-de3176c0567d", "29463-7");
+        List<List<Object>> obs = fhirService.getPlotObservationData("b426b062-8273-4b93-a907-de3176c0567d", "29463-7");
+        for (SimpleObservation s: list
+        ) {
+            System.out.println(s.toString());
+        }
+        return "error";
     }
 
 }

@@ -12,6 +12,8 @@ import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,29 +36,29 @@ public class FHIRService {
         this.client = context.newRestfulGenericClient(serverBase);
     }
 
-    public List<SimplePatient> getAllPatients(){
+    public List<SimplePatient> getAllPatients() {
         Bundle results = client
                 .search()
                 .forResource(Patient.class)
                 .returnBundle(Bundle.class)
                 .execute();
 
-        return  results.getEntry()
+        return results.getEntry()
                 .stream()
                 .map(bundleEntryComponent -> {
-                    Patient patient = (Patient)bundleEntryComponent.getResource();
+                    Patient patient = (Patient) bundleEntryComponent.getResource();
                     return patientConverter.convertPatientToSimplePatient(patient);
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<SimplePatient> getPatientsWithNames(String name){
+    public List<SimplePatient> getPatientsWithNames(String name) {
         return this.getAllPatients().stream()
                 .filter(simplePatient -> simplePatient.getName().toUpperCase().contains(name))
                 .collect(Collectors.toList());
     }
 
-    public List<SimpleObservation> getObservations(String id){
+    public List<SimpleObservation> getObservations(String id) {
         Bundle result = client
                 .search()
                 .forResource(Observation.class)
@@ -66,10 +68,17 @@ public class FHIRService {
 
         return result.getEntry().stream()
                 .map(bundleEntryComponent -> {
-                    Observation observation = (Observation)bundleEntryComponent.getResource();
+                    Observation observation = (Observation) bundleEntryComponent.getResource();
                     return observationConverter.convertObservationToSimpleObservation(observation);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public List<SimpleObservation> getObservations(String id, String code) {
+            return getObservations(id)
+                    .stream()
+                    .filter(simpleObservation -> simpleObservation.getCodingDisplays().get(0).getCode().equalsIgnoreCase(code))
+                    .collect(Collectors.toList());
     }
 
 
@@ -83,12 +92,23 @@ public class FHIRService {
 
         return result.getEntry().stream()
                 .map(bundleEntryComponent -> {
-                    MedicationRequest mr = (MedicationRequest)bundleEntryComponent.getResource();
+                    MedicationRequest mr = (MedicationRequest) bundleEntryComponent.getResource();
                     return medicationRequestConverter.convertMedicationRequestToSimpleMedicationRequest(mr);
                 })
                 .collect(Collectors.toList());
     }
 
+    public List<List<Object>> getPlotObservationData(String patient, String code){
+        List<SimpleObservation> observations = getObservations(patient, code);
+        Integer dateMock = 0;
+        List<List<Object>> result = new ArrayList<>();
+        for (SimpleObservation observation: observations
+             ) {
+            result.add(Arrays.asList(dateMock.toString(), observation.getSimpleValueQuantity().getValue()));
+            dateMock++;
+        }
+        return result;
+    }
 
     @Autowired
     public void setPatientConverter(PatientConverter patientConverter) {
