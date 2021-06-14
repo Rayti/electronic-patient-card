@@ -28,11 +28,6 @@ class FHIRServiceTest {
 
     @Test
     void checkMedicationRequests(){
-
-        List<MedicationRequest> list = fhirService.getMedicationRequest(null);
-
-        list.forEach(medicationRequest -> System.out.println(medicationRequest.getId()));
-
     }
 
     @Test
@@ -109,33 +104,14 @@ class FHIRServiceTest {
 
     @Test
     void getAllPatients() {
-        List<Patient> patients = fhirService.getAllPatients();
-        System.out.println(patients.get(0).getId());
-        System.out.println(patients.get(0).getIdBase());
-        System.out.println(patients.get(0).getIdElement().getIdPart());
-
-
-
     }
 
     @Test
     void getPatientByName() {
-
-
     }
 
     @Test
     void getObservations() {
-
-        List<Observation> list = new ArrayList<>();
-        PatientConverter converter = new PatientConverter();
-
-        fhirService.getAllPatients().forEach(patient -> {
-            SimplePatient simplePatient = converter.convertPatientToSimplePatient(patient);
-            System.out.println(simplePatient);
-        });
-        //fhirService.getAllPatients().forEach(patient -> list.addAll(fhirService.getObservations(converter.convertPatientToSimplePatient(patient).getUrl())));
-        System.out.println("num of observations = " + list.size());
     }
 
     @Test

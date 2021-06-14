@@ -58,10 +58,7 @@ public class FHIRController {
     public String patientsView(Model model, @RequestParam(required = false) String name) {
         logger.info("Request GET on /patients");
         String finalName = name==null ? "" : name.toUpperCase();
-        List<SimplePatient> simplePatientList = fhirService.getAllPatients().stream()
-                .map(patient -> patientConverter.convertPatientToSimplePatient(patient))
-                .filter(simplePatient -> simplePatient.getName().toUpperCase().contains(finalName))
-                .collect(Collectors.toList());
+        List<SimplePatient> simplePatientList = fhirService.getPatientsWithNames(finalName);
 
         SimplePatientCache.updateCache(simplePatientList);
 
@@ -104,16 +101,11 @@ public class FHIRController {
 
         if (optionalSimplePatient.isPresent()) {
             SimplePatient patient = optionalSimplePatient.get();
-            List<SimpleObservation> simpleObservations = fhirService
-                    .getObservations(patient.getId())
-                    .stream()
-                    .map(observation -> observationConverter.convertObservationToSimpleObservation(observation))
-                    .collect(Collectors.toList());
-            List<SimpleMedicationRequest> medicationRequests = fhirService
-                    .getMedicationRequest(patient.getId())
-                    .stream()
-                    .map(medicationRequest -> medicationRequestConverter.convertMedicationRequestToSimpleMedicationRequest(medicationRequest))
-                    .collect(Collectors.toList());
+
+            List<SimpleObservation> simpleObservations = fhirService.getObservations(patient.getId());
+
+            List<SimpleMedicationRequest> medicationRequests = fhirService.getMedicationRequest(patient.getId());
+
             model.addAttribute("medications", medicationRequests);
             model.addAttribute("observations", simpleObservations);
             model.addAttribute("patient", patient);
@@ -129,9 +121,7 @@ public class FHIRController {
     public String devCheck(Model model) {
         logger.info("Request GET on /devcheck");
 
-        List<SimplePatient> simplePatientList = fhirService.getAllPatients().stream()
-                .map(patient -> patientConverter.convertPatientToSimplePatient(patient))
-                .collect(Collectors.toList());
+        List<SimplePatient> simplePatientList = fhirService.getAllPatients();
 
         SimplePatientCache.updateCache(simplePatientList);
 

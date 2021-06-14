@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class ObservationConverter {
 
-    public String getId(Observation observation){
+    private String getId(Observation observation){
         return observation.getIdElement().getIdPart();
     }
 
@@ -24,7 +24,7 @@ public class ObservationConverter {
                 .collect(Collectors.toList());
     }
 
-    public SimpleValueQuantity getValueQuantity(Observation observation){
+    private SimpleValueQuantity getValueQuantity(Observation observation){
         if(observation.getValue() instanceof Quantity){
             return new SimpleValueQuantity(
                     observation.getValueQuantity().getValue().longValue(),
