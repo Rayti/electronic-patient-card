@@ -27,6 +27,18 @@
     <input type="submit">
 </form>
 </div>
+
+<button th:onclick="@{window.location='/devcheck'}">Dev check</button>
+<table th:if="${patientsWithObservations != null}">
+    <tr>
+        <td th:text="'patients with observations amount = ' + ${patientsWithObservations.size()}"></td>
+    </tr>
+    <tr th:each="patientId : ${patientsWithObservations}" >
+        <td th:text="${patientId}"></td>
+    </tr>
+</table>
+
+
 <table>
     <tr>
         <th>No.</th>

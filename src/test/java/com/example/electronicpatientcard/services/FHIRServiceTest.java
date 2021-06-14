@@ -28,7 +28,7 @@ class FHIRServiceTest {
     void check(){
 
         FhirContext context = FhirContext.forR4();
-        String serverBase = Constant.REMOTE_SERVER_URL_R4;
+        String serverBase = Constant.LOCAL_SERVER_URL_R4;
         IGenericClient client = context.newRestfulGenericClient(serverBase);
 
         PatientConverter patientConverter = new PatientConverter();
@@ -55,12 +55,22 @@ class FHIRServiceTest {
         });
 
 
+        List<Observation> observations = new ArrayList<>();
+
+        result2.getEntry().forEach(bundleEntryComponent -> {
+            Observation observation = (Observation)bundleEntryComponent.getResource();
+            observations.add(observation);
+        });
+
+
+
         List<String> answers = new ArrayList<>();
 
         simplePatients.forEach(simplePatient -> {
             System.out.println(simplePatient.getUrl());
             client.search().forResource(Observation.class)
-                    .where(new StringClientParam("patient").matches().value(simplePatient.getUrl()))
+                    //.where(new StringClientParam("patient").matches().value(simplePatient.getUrl()))
+                    .where(Observation.SUBJECT.hasId("Patient/" + simplePatient.getId()))
                     .returnBundle(Bundle.class)
                     .execute()
                     .getEntry()
@@ -72,21 +82,18 @@ class FHIRServiceTest {
 
         });
 
-        System.out.println("PATIENTS IDS ############################################");
+        System.out.println("PATIENTS IDS ############################################ SIZE = " + simplePatients.size());
 
 
-        simplePatients.forEach(simplePatient -> System.out.println(simplePatient.getId()));
+        simplePatients.forEach(simplePatient -> System.out.println(simplePatient.getId() + "; " + simplePatient.getUrl()));
 
-        System.out.println("PATIENTS AND THEIR OBSERVATIONS ############################################");
+        System.out.println("PATIENTS AND THEIR OBSERVATIONS ############################################ SIZE = " + answers.size());
         answers.forEach(System.out::println);
 
 
-        System.out.println("OBSERVATIONS ############################################");
+        System.out.println("OBSERVATIONS ############################################ SIZE = " + observations.size());
 
-        result2.getEntry().forEach(bundleEntryComponent -> {
-            Observation observation = (Observation)bundleEntryComponent.getResource();
-            System.out.println(observation.getId());
-        });
+        observations.forEach(observation -> System.out.println(observation.getSubject().getReference() + "; " + observation.getId()));
     }
 
     @Test

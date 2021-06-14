@@ -3,7 +3,7 @@ package com.example.electronicpatientcard.controllers;
 import com.example.electronicpatientcard.constants.Constant;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
-import com.example.electronicpatientcard.model.SimplePatientCache;
+import com.example.electronicpatientcard.model.Cache;
 import com.example.electronicpatientcard.services.FHIRService;
 import com.example.electronicpatientcard.services.ObservationConverter;
 import com.example.electronicpatientcard.services.PatientConverter;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -22,11 +21,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.temporal.Temporal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -63,12 +58,14 @@ public class FHIRController {
                 .filter(simplePatient -> simplePatient.getName().toUpperCase().contains(finalName))
                 .collect(Collectors.toList());
 
-        SimplePatientCache.updateCache(simplePatientList);
+        Cache.updateSimplePatientCache(simplePatientList);
 
         model.addAttribute("patients", simplePatientList);
 
         return "patients";
     }
+
+
 
 /*
     TODO when no date provided on /patient/{id} and clicked submit -> ArithmeticException is thrown with info: "long overflow"
@@ -96,14 +93,14 @@ public class FHIRController {
             endDate = Date.from(Instant.MIN);
         }
         // todo: add filtering observations and statements based on startDate and endDate
-        Optional<SimplePatient> optionalSimplePatient = SimplePatientCache.getCache().stream()
+        Optional<SimplePatient> optionalSimplePatient = Cache.getSimplePatientCache().stream()
                 .filter(simplePatient -> simplePatient.getId().equalsIgnoreCase(id))
                 .findFirst();
 
         if (optionalSimplePatient.isPresent()) {
             SimplePatient patient = optionalSimplePatient.get();
             List<SimpleObservation> simpleObservations = fhirService
-                    .getObservations(patient.getUrl())
+                    .getObservations(patient.getId())
                     .stream()
                     .map(observation -> observationConverter.convertObservationToSimpleObservation(observation))
                     .collect(Collectors.toList());
@@ -116,5 +113,29 @@ public class FHIRController {
         return "error";
     }
 
+
+    @GetMapping("/devcheck")
+    public String devCheck(Model model) {
+        logger.info("Request GET on /devcheck");
+
+        List<SimplePatient> simplePatientList = fhirService.getAllPatients().stream()
+                .map(patient -> patientConverter.convertPatientToSimplePatient(patient))
+                .collect(Collectors.toList());
+
+        Cache.updateSimplePatientCache(simplePatientList);
+
+        List<String> patientsWithObservations = new ArrayList<>();
+
+        simplePatientList.forEach(simplePatient -> {
+            if (fhirService.getObservations(simplePatient.getId()).size() > 0){
+                patientsWithObservations.add(simplePatient.getId());
+            }
+        });
+
+        model.addAttribute("patients", simplePatientList);
+        model.addAttribute("patientsWithObservations", patientsWithObservations);
+
+        return "patients";
+    }
 
 }

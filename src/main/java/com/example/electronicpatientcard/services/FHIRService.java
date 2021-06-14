@@ -21,7 +21,7 @@ public class FHIRService {
 
     public FHIRService() {
         this.context = FhirContext.forR4();
-        this.serverBase = Constant.REMOTE_SERVER_URL_R4;
+        this.serverBase = Constant.LOCAL_SERVER_URL_R4;
         this.client = context.newRestfulGenericClient(serverBase);
     }
 
@@ -49,11 +49,11 @@ public class FHIRService {
         return result.getEntry().size() > 0 ? (Patient)result.getEntry().get(0).getResource() : null;
     }
 
-    public List<Observation> getObservations(String url){
+    public List<Observation> getObservations(String id){
         Bundle result = client
                 .search()
                 .forResource(Observation.class)
-                .where(new StringClientParam("patient").matches().value(url))
+                .where(Observation.SUBJECT.hasId("Patient/" + id))
                 .returnBundle(Bundle.class)
                 .execute();
 
