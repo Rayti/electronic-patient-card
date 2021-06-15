@@ -79,8 +79,8 @@ public class FHIRController {
 
         Date startDate, endDate;
         try {
-            startDate = DateHandler.parseToDate(start, Constant.DEFAULT_START_DATE_HTML_INPUT_FORMAT);
-            endDate = DateHandler.parseToDate(end, Constant.DEFAULT_END_DATE_HTML_INPUT_FORMAT);
+            startDate = DateHandler.parseToDate(start,  Constant.DEFAULT_START_DATE_HTML_INPUT_FORMAT);
+            endDate = DateHandler.parseToDate(end, DateHandler.parseToString(DateHandler.getTodayDate()));
         } catch (ParseException e) {
             model.addAttribute("Error with parsing dates");
             logger.error("Error with parsing dates");

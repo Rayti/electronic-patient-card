@@ -23,6 +23,10 @@ public class DateHandler {
         return dateFormat.parse(backupDateText);
     }
 
+    public static Date getTodayDate(){
+        return new Date();
+    }
+
     public static String parseToString(Date date){
         DateFormat dateFormat = new SimpleDateFormat(dateFormatVersion);
         return dateFormat.format(date);
