@@ -1,2 +1,13 @@
-# electronic-patient-card
-University project
+## Electronic Patient Card
+
+## `Miłosz Karłowicz && Daniel Kotyński`
+
+### Technologies:
+- HAPI FHIR
+- Java 1.8
+- Spring
+- Thymeleaf
+- CSS
+- HTML
+- Lombok
+
