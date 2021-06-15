@@ -10,6 +10,8 @@ import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ public class FHIRService {
     private FhirContext context;
     private IGenericClient client;
     private String serverBase;
+    private static Logger logger = LoggerFactory.getLogger(FHIRService.class);
 
     private PatientConverter patientConverter;
     private ObservationConverter observationConverter;
@@ -30,12 +33,15 @@ public class FHIRService {
 
 
     public FHIRService() {
+        logger.info("Loaded class");
         this.context = FhirContext.forR4();
         this.serverBase = Constant.LOCAL_SERVER_URL_R4;
         this.client = context.newRestfulGenericClient(serverBase);
     }
 
     public List<SimplePatient> getAllPatients() {
+        int count = 0;
+        logger.info("Searching for patients on " + count + " page");
         Bundle results = client
                 .search()
                 .forResource(Patient.class)
@@ -45,6 +51,8 @@ public class FHIRService {
         List<SimplePatient> simplePatientList = new ArrayList<>(bundleToSimplePatientList(results));
 
         while (results.getLink(IBaseBundle.LINK_NEXT) != null) {
+            count++;
+            logger.info("Searching for patients on " + count + " page");
             results = client
                     .loadPage()
                     .next(results)
@@ -72,6 +80,8 @@ public class FHIRService {
     }
 
     public List<SimpleObservation> getObservations(String id) {
+        int count = 0;
+        logger.info("Searching for observations for patient id " + id + " on " + count + " page");
         Bundle result = client
                 .search()
                 .forResource(Observation.class)
@@ -82,6 +92,8 @@ public class FHIRService {
         List<SimpleObservation> simpleObservationList = new ArrayList<>(bundleToSimpleObservationList(result));
 
         while (result.getLink(IBaseBundle.LINK_NEXT) != null) {
+            count++;
+            logger.info("Searching for observations for patient id " + id + " on " + count + " page");
             result = client
                     .loadPage()
                     .next(result)
@@ -120,6 +132,8 @@ public class FHIRService {
 
 
     public List<SimpleMedicationRequest> getMedicationRequest(String id) {
+        int count = 0;
+        logger.info("Searching for medication request for patient id " + id + " on " + count + " page");
         Bundle result = client
                 .search()
                 .forResource(MedicationRequest.class)
@@ -131,6 +145,8 @@ public class FHIRService {
                 bundleToSimpleMediactionRequest(result));
 
         while (result.getLink(IBaseBundle.LINK_NEXT) != null) {
+            count++;
+            logger.info("Searching for medication request for patient id " + id + " on " + count + " page");
             result = client
                     .loadPage()
                     .next(result)
