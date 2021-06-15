@@ -149,6 +149,26 @@ public class FHIRService {
         return jsonResult;
     }
 
+    public Map<String, String> getDisplays(String patient) {
+        Map<String, String> result = new HashMap<>();
+        List<SimpleObservation> simpleObservations = getObservations(patient);
+        for (SimpleObservation simpleObservation :
+                simpleObservations) {
+            result.put(simpleObservation.getCode(), simpleObservation.getDisplay());
+        }
+        return result;
+    }
+
+    public Map<String, String> getUnits(String patient) {
+        Map<String, String> result = new HashMap<>();
+        List<SimpleObservation> simpleObservations = getObservations(patient);
+        for (SimpleObservation simpleObservation :
+                simpleObservations) {
+            result.put(simpleObservation.getCode(), simpleObservation.getUnit());
+        }
+        return result;
+    }
+
     @Autowired
     public void setPatientConverter(PatientConverter patientConverter) {
         this.patientConverter = patientConverter;
