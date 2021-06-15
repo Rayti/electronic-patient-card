@@ -1,13 +1,13 @@
-## Electronic Patient Card
+## `Electronic Patient Card`
 
-## `Miłosz Karłowicz && Daniel Kotyński`
+### `Authors: Miłosz Karłowicz && Daniel Kotyński`
 
-### Technologies:
-- HAPI FHIR
-- Java 1.8
-- Spring
-- Thymeleaf
-- CSS
-- HTML
-- Lombok
+### `Technologies:`
+- `HAPI FHIR`
+- `Java 1.8`
+- `Spring`
+- `Thymeleaf`
+- `CSS`
+- `HTML`
+- `Lombok`
 
