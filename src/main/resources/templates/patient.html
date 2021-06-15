@@ -17,7 +17,7 @@
 
         // Set a callback to run when the Google Visualization API is loaded.
         google.charts.setOnLoadCallback(drawChart);
-        console.log([[${jsonBlob}]]);
+        console.log([[${observationsData}]]);
 
         // Callback that creates and populates a data table,
         // instantiates the pie chart, passes in the data and
@@ -27,20 +27,14 @@
             // Create the data table.
             var data = new google.visualization.DataTable();
             data.addColumn('string', 'date');
-            data.addColumn('number', [[${chartUnit}]]);
-           // data.addRows([
-             //   ['Mushrooms', 3],
-               // ['Onions', 1],
-                //['Olives', 1],
-               // ['Zucchini', 1],
-               // ['Pepperoni', 2]
-           // ]);
-           console.log([[${jsonBlob}]][code]);
+            data.addColumn('number', [[${chartUnits}]][code]);
+
+           console.log([[${observationsData}]][code]);
            console.log(data);
            console.log(code);
-           data.addRows([[${jsonBlob}]][code]);
+           data.addRows([[${observationsData}]][code]);
             // Set chart options
-            var options = {'title':[[${chartTitle}]],
+            var options = {'title':[[${chartTitles}]][code],
                 'width':400,
                 'height':300};
 

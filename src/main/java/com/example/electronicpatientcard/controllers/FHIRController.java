@@ -111,10 +111,11 @@ public class FHIRController {
 
             List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7");
             model.addAttribute("chartData", plottedObservations);
-            model.addAttribute("chartTitle", simpleObservations.get(0).getCodingDisplays().get(0).getDisplay());
-            model.addAttribute("chartUnit", simpleObservations.get(0).getSimpleValueQuantity().getUnit());
+            model.addAttribute("chartTitles", fhirService.getDisplays(id));
+            model.addAttribute("chartUnits", fhirService.getUnits(id));
 
-            model.addAttribute("jsonBlob", fhirService.getPlotObservationData(id));
+            model.addAttribute("observationsData", fhirService.getPlotObservationData(id));
+
 
             return "patient";
         }
