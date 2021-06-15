@@ -109,12 +109,12 @@ public class FHIRController {
             model.addAttribute("endDate", DateHandler.parseToString(endDate));
             // todo: make this code to be selected by clicking
 
-            List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7");
+            List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7", simpleObservations);
             model.addAttribute("chartData", plottedObservations);
-            model.addAttribute("chartTitles", fhirService.getDisplays(id));
-            model.addAttribute("chartUnits", fhirService.getUnits(id));
+            model.addAttribute("chartTitles", fhirService.getDisplays(id, simpleObservations));
+            model.addAttribute("chartUnits", fhirService.getUnits(id, simpleObservations));
 
-            model.addAttribute("observationsData", fhirService.getPlotObservationData(id));
+            model.addAttribute("observationsData", fhirService.getPlotObservationData(id, simpleObservations));
 
 
             return "patient";
@@ -148,13 +148,13 @@ public class FHIRController {
 
     @GetMapping("/test")
     public String testEndpoint(Model model){
-        List<SimpleObservation> l = fhirService.getObservations("5c818f3d-7051-4b86-8203-1dc624a91804");
-        List<SimpleObservation> list = fhirService.getObservations("b426b062-8273-4b93-a907-de3176c0567d", "29463-7");
+/*        List<SimpleObservation> l = fhirService.getObservations("5c818f3d-7051-4b86-8203-1dc624a91804");
+        //List<SimpleObservation> list = fhirService.getObservations("b426b062-8273-4b93-a907-de3176c0567d", "29463-7");
         List<List<Object>> obs = fhirService.getPlotObservationData("b426b062-8273-4b93-a907-de3176c0567d", "29463-7");
         for (SimpleObservation s: list
         ) {
             System.out.println(s.toString());
-        }
+        }*/
         return "error";
     }
 
