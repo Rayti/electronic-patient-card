@@ -5,7 +5,10 @@ import com.example.electronicpatientcard.model.SimpleMedicationRequest;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
 import com.example.electronicpatientcard.model.SimplePatientCache;
-import com.example.electronicpatientcard.services.*;
+import com.example.electronicpatientcard.services.FHIRService;
+import com.example.electronicpatientcard.services.MedicationRequestConverter;
+import com.example.electronicpatientcard.services.ObservationConverter;
+import com.example.electronicpatientcard.services.PatientConverter;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +60,7 @@ public class FHIRController {
         String finalName = name==null ? "" : name.toUpperCase();
         List<SimplePatient> simplePatientList = fhirService.getPatientsWithNames(finalName);
 
-        SimplePatientCache.updateCache(simplePatientList);
+        Cache.updateSimplePatientCache(simplePatientList);
 
         model.addAttribute("patients", simplePatientList);
 
@@ -75,24 +78,18 @@ public class FHIRController {
     public String patientView(@PathVariable String id, Model model, @RequestParam(required = false) String start,
                               @RequestParam(required = false) String end) {
         logger.info("Request GET on /patient/" + id + "?start = " + start + "&end=" + end);
-        String formatType = Constant.HTML_INPUT_DATE_FORMAT;
-        DateFormat dateFormat = new SimpleDateFormat(formatType);
+
         Date startDate, endDate;
-        // todo: make better default values for startDate&endDAte
         try {
-            startDate = start == null ? dateFormat.parse(Constant.DEFAULT_START_DATE_HTML_INPUT_FORMAT) : dateFormat.parse(start);
+            startDate = DateHandler.parseToDate(start, Constant.DEFAULT_START_DATE_HTML_INPUT_FORMAT);
+            endDate = DateHandler.parseToDate(end, Constant.DEFAULT_END_DATE_HTML_INPUT_FORMAT);
         } catch (ParseException e) {
-            logger.error("Could not parse date " + start + " with format " + formatType);
-            startDate = Date.from(Instant.MIN);
+            model.addAttribute("Error with parsing dates");
+            logger.error("Error with parsing dates");
+            return "error";
         }
-        try {
-            endDate = start == null ? Calendar.getInstance().getTime() : dateFormat.parse(end);
-        } catch (ParseException e) {
-            logger.error("Could not parse date " + end + " with format " + formatType);
-            endDate = Date.from(Instant.MIN);
-        }
-        // todo: add filtering observations and statements based on startDate and endDate
-        Optional<SimplePatient> optionalSimplePatient = SimplePatientCache.getCache().stream()
+
+        Optional<SimplePatient> optionalSimplePatient = Cache.getSimplePatientCache().stream()
                 .filter(simplePatient -> simplePatient.getId().equalsIgnoreCase(id))
                 .findFirst();
 
@@ -108,12 +105,15 @@ public class FHIRController {
 
             List<SimpleObservation> simpleObservations = fhirService.getObservations(patient.getId());
 
+            simpleObservations = fhirService.getObservationsWithDateBoundaries(simpleObservations, startDate, endDate);
+
             List<SimpleMedicationRequest> medicationRequests = fhirService.getMedicationRequest(patient.getId());
 
             model.addAttribute("medications", medicationRequests);
             model.addAttribute("observations", simpleObservations);
             model.addAttribute("patient", patient);
-            logger.info(String.valueOf(simpleObservations.size()));
+            model.addAttribute("startDate", DateHandler.parseToString(startDate));
+            model.addAttribute("endDate", DateHandler.parseToString(endDate));
             return "patient";
         }
         model.addAttribute("msg", "Patient does not exist - server must have been updated.");
@@ -127,7 +127,7 @@ public class FHIRController {
 
         List<SimplePatient> simplePatientList = fhirService.getAllPatients();
 
-        SimplePatientCache.updateCache(simplePatientList);
+        Cache.updateSimplePatientCache(simplePatientList);
 
         List<String> patientsWithObservations = new ArrayList<>();
 

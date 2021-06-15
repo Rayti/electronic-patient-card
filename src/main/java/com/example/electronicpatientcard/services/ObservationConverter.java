@@ -7,6 +7,7 @@ import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Quantity;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,9 +34,14 @@ public class ObservationConverter {
         return null;
     }
 
+    private Date getDate(Observation observation){
+        return observation.getIssued();
+    }
+
     public SimpleObservation convertObservationToSimpleObservation(Observation observation){
         return new SimpleObservation(
                 getId(observation),
+                getDate(observation),
                 getCodingDisplay(observation),
                 getValueQuantity(observation));
     }

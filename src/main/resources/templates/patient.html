@@ -62,11 +62,13 @@
 
 <h2><a th:href="@{/patients}">Patients</a></h2>
 
-<form th:action="@{'{id}'(id=${patient.getId()})}" method="get">
-  <input type="date"  id="start" name="start">
-  <input type="date" id="end" name="end">
-  <input type="submit">
-</form>
+<div id="nav">
+  <form th:action="@{'{id}'(id=${patient.getId()})}" method="get">
+    <input type="date"  id="start" name="start" th:value="${startDate}">
+    <input type="date" id="end" name="end" th:value="${endDate}">
+    <input type="submit">
+  </form>
+</div>
 
 <table>
   <tr>
@@ -103,10 +105,11 @@
 
 <table>
   <tr>
-    <th colspan="5">Observations</th>
+    <th colspan="6">Observations</th>
   </tr>
   <tr>
     <th>Id</th>
+    <th>Date</th>
     <th>Value</th>
     <th>Unit</th>
     <th>Code</th>
@@ -114,6 +117,7 @@
   </tr>
   <tr th:each="obs : ${observations}">
     <td th:text="${obs.getId()}"></td>
+    <td th:text="${obs.getDate()}"></td>
     <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getValue()}"></td></th:block>
     <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>NaN</td></th:block>
     <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getUnit()}"></td></th:block>

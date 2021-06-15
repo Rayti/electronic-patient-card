@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -36,29 +37,46 @@ public class FHIRService {
         this.client = context.newRestfulGenericClient(serverBase);
     }
 
-    public List<SimplePatient> getAllPatients() {
+    public List<SimplePatient> getAllPatients(){
         Bundle results = client
                 .search()
                 .forResource(Patient.class)
                 .returnBundle(Bundle.class)
                 .execute();
 
-        return results.getEntry()
+        return  results.getEntry()
                 .stream()
                 .map(bundleEntryComponent -> {
-                    Patient patient = (Patient) bundleEntryComponent.getResource();
+                    Patient patient = (Patient)bundleEntryComponent.getResource();
                     return patientConverter.convertPatientToSimplePatient(patient);
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<SimplePatient> getPatientsWithNames(String name) {
+    public SimplePatient getPatient(String id){
+        Bundle result = client
+                .search()
+                .forResource(Patient.class)
+                .where(Patient.LINK.hasId(id))
+                .returnBundle(Bundle.class)
+                .execute();
+
+        Optional<Bundle.BundleEntryComponent> optionalPatient = result.getEntry().stream().findFirst();
+
+        if (optionalPatient.isPresent()) {
+            Patient patient = (Patient)optionalPatient.get().getResource();
+            return patientConverter.convertPatientToSimplePatient(patient);
+        }
+        return null;
+    }
+
+    public List<SimplePatient> getPatientsWithNames(String name){
         return this.getAllPatients().stream()
                 .filter(simplePatient -> simplePatient.getName().toUpperCase().contains(name))
                 .collect(Collectors.toList());
     }
 
-    public List<SimpleObservation> getObservations(String id) {
+    public List<SimpleObservation> getObservations(String id){
         Bundle result = client
                 .search()
                 .forResource(Observation.class)
@@ -68,7 +86,7 @@ public class FHIRService {
 
         return result.getEntry().stream()
                 .map(bundleEntryComponent -> {
-                    Observation observation = (Observation) bundleEntryComponent.getResource();
+                    Observation observation = (Observation)bundleEntryComponent.getResource();
                     return observationConverter.convertObservationToSimpleObservation(observation);
                 })
                 .collect(Collectors.toList());
@@ -79,6 +97,16 @@ public class FHIRService {
                     .stream()
                     .filter(simpleObservation -> simpleObservation.getCodingDisplays().get(0).getCode().equalsIgnoreCase(code))
                     .collect(Collectors.toList());
+    }
+
+    public List<SimpleObservation> getObservationsWithDateBoundaries(List<SimpleObservation> simpleObservations,
+                                                                     Date start,
+                                                                     Date end) {
+        return simpleObservations
+                .stream()
+                .filter(simpleObservation ->
+                        simpleObservation.getDate().after(start) && simpleObservation.getDate().before(end))
+                .collect(Collectors.toList());
     }
 
 
@@ -92,7 +120,7 @@ public class FHIRService {
 
         return result.getEntry().stream()
                 .map(bundleEntryComponent -> {
-                    MedicationRequest mr = (MedicationRequest) bundleEntryComponent.getResource();
+                    MedicationRequest mr = (MedicationRequest)bundleEntryComponent.getResource();
                     return medicationRequestConverter.convertMedicationRequestToSimpleMedicationRequest(mr);
                 })
                 .collect(Collectors.toList());
