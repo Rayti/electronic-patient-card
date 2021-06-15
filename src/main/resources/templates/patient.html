@@ -6,7 +6,51 @@
   <script src="https://kit.fontawesome.com/6f884c792c.js" crossorigin="anonymous"></script>
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
   <title>Information</title>
+  <script type="text/javascript" th:inline="javascript">
+
+        var code;
+   // Load the Visualization API and the corechart package.
+        google.charts.load('current', {'packages':['corechart']});
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+        console.log([[${observationsData}]]);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        function drawChart() {
+
+            // Create the data table.
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'date');
+            data.addColumn('number', [[${chartUnits}]][code]);
+
+           console.log([[${observationsData}]][code]);
+           console.log(data);
+           console.log(code);
+           data.addRows([[${observationsData}]][code]);
+            // Set chart options
+            var options = {'title':[[${chartTitles}]][code],
+                'width':800,
+                'height':600};
+
+            // Instantiate and draw our chart, passing in some options.
+            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            if ( code !== undefined){
+            chart.draw(data, options);
+            }
+        }
+
+        function selectData(c){
+          console.log(c);
+          code = c;
+          drawChart();
+        }
+        </script>
 </head>
 <body>
 <header>
@@ -70,20 +114,18 @@
     <th colspan="6">Observations</th>
   </tr>
   <tr>
-    <th>Id</th>
     <th>Date</th>
     <th>Value</th>
     <th>Unit</th>
     <th>Code</th>
     <th>Display</th>
   </tr>
-  <tr th:each="obs : ${observations}">
-    <td th:text="${obs.getId()}"></td>
+  <tr th:each="obs : ${observations}" th:arg = "${obs.getCode()}"  th:onclick="javascript:selectData(this.getAttribute('arg'));">
     <td th:text="${obs.getDate()}"></td>
     <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getValue()}"></td></th:block>
-    <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>NaN</td></th:block>
+    <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>-</td></th:block>
     <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getUnit()}"></td></th:block>
-    <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>NaN</td></th:block>
+    <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>-</td></th:block>
     <th:block th:each="coding : ${obs.getCodingDisplays()}">
       <td th:text="${coding.getCode()}"></td>
       <td th:text="${coding.getDisplay()}"></td>
@@ -104,7 +146,7 @@
     <td th:each="display : ${medication.displays}" th:text="${display}"></td>
   </tr>
 </table>
-
+<div id="chart_div"></div>
 <br>
 </body>
 </html>

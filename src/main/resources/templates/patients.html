@@ -21,14 +21,13 @@
 </header>
 
 <div id="nav">
-<h2><a th:href="@{/patients}">Patients</a></h2>
+
 <form action="/patients" method="get">
     <input type="text"  id="name" name="name">
     <input type="submit">
 </form>
 </div>
 
-<button th:onclick="@{window.location='/devcheck'}">Dev check</button>
 <table th:if="${patientsWithObservations != null}">
     <tr>
         <td th:text="'patients with observations amount = ' + ${patientsWithObservations.size()}"></td>
@@ -42,14 +41,12 @@
 <table>
     <tr>
         <th>No.</th>
-        <th>Id</th>
         <th>Name</th>
         <th>Gender</th>
         <th>Birth date</th>
     </tr>
     <tr th:each="patient, stat : ${patients}" th:onclick="@{window.location='/patient/{id}'(id=${patient.getId()})}">
         <td th:text="${stat.count}"></td>
-        <td th:text="${patient.getId()}"></td>
         <td th:text="${patient.getName()}"></td>
         <td th:text="${patient.getGender()}"></td>
         <td th:text="${patient.getBirthDate()}"></td>

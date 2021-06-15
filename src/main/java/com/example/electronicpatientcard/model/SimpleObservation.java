@@ -20,4 +20,20 @@ public class SimpleObservation {
         this.codingDisplays = codingDisplays;
         this.simpleValueQuantity = simpleValueQuantity;
     }
+
+    public String getCode() {
+        return codingDisplays.get(0).getCode();
+    }
+
+    public String getDisplay() {
+        return codingDisplays.get(0).getDisplay();
+    }
+
+    public Long getValue(){
+        return simpleValueQuantity!=null ? simpleValueQuantity.getValue() : null;
+    }
+
+    public String getUnit(){
+        return simpleValueQuantity!=null ? simpleValueQuantity.getUnit() : null;
+    }
 }

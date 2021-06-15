@@ -1,15 +1,16 @@
 package com.example.electronicpatientcard.controllers;
 
 import com.example.electronicpatientcard.constants.Constant;
+import com.example.electronicpatientcard.model.Cache;
 import com.example.electronicpatientcard.model.SimpleMedicationRequest;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
-import com.example.electronicpatientcard.model.Cache;
+
 import com.example.electronicpatientcard.services.*;
+import org.hl7.fhir.r4.model.MedicationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
+import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class FHIRController {
@@ -72,8 +74,8 @@ public class FHIRController {
 
         Date startDate, endDate;
         try {
-            startDate = DateHandler.parseToDate(start, Constant.DEFAULT_START_DATE_HTML_INPUT_FORMAT);
-            endDate = DateHandler.parseToDate(end, Constant.DEFAULT_END_DATE_HTML_INPUT_FORMAT);
+            startDate = DateHandler.parseToDate(start,  Constant.DEFAULT_START_DATE_HTML_INPUT_FORMAT);
+            endDate = DateHandler.parseToDate(end, DateHandler.parseToString(DateHandler.getTodayDate()));
         } catch (ParseException e) {
             model.addAttribute("Error with parsing dates");
             logger.error("Error with parsing dates");
@@ -83,6 +85,8 @@ public class FHIRController {
         Optional<SimplePatient> optionalSimplePatient = Cache.getSimplePatientCache().stream()
                 .filter(simplePatient -> simplePatient.getId().equalsIgnoreCase(id))
                 .findFirst();
+
+
 
         if (optionalSimplePatient.isPresent()) {
             SimplePatient patient = optionalSimplePatient.get();
@@ -98,6 +102,16 @@ public class FHIRController {
             model.addAttribute("patient", patient);
             model.addAttribute("startDate", DateHandler.parseToString(startDate));
             model.addAttribute("endDate", DateHandler.parseToString(endDate));
+            // todo: make this code to be selected by clicking
+
+            List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7", simpleObservations);
+            model.addAttribute("chartData", plottedObservations);
+            model.addAttribute("chartTitles", fhirService.getDisplays(id, simpleObservations));
+            model.addAttribute("chartUnits", fhirService.getUnits(id, simpleObservations));
+
+            model.addAttribute("observationsData", fhirService.getPlotObservationData(id, simpleObservations));
+
+
             return "patient";
         }
         model.addAttribute("msg", "Patient does not exist - server must have been updated.");
@@ -125,6 +139,18 @@ public class FHIRController {
         model.addAttribute("patientsWithObservations", patientsWithObservations);
 
         return "patients";
+    }
+
+    @GetMapping("/test")
+    public String testEndpoint(Model model){
+/*        List<SimpleObservation> l = fhirService.getObservations("5c818f3d-7051-4b86-8203-1dc624a91804");
+        //List<SimpleObservation> list = fhirService.getObservations("b426b062-8273-4b93-a907-de3176c0567d", "29463-7");
+        List<List<Object>> obs = fhirService.getPlotObservationData("b426b062-8273-4b93-a907-de3176c0567d", "29463-7");
+        for (SimpleObservation s: list
+        ) {
+            System.out.println(s.toString());
+        }*/
+        return "error";
     }
 
 }
