@@ -11,13 +11,14 @@
   <title>Information</title>
   <script type="text/javascript" th:inline="javascript">
 
-
+        var code;
    // Load the Visualization API and the corechart package.
         google.charts.load('current', {'packages':['corechart']});
 
         // Set a callback to run when the Google Visualization API is loaded.
         google.charts.setOnLoadCallback(drawChart);
         console.log([[${jsonBlob}]]);
+
         // Callback that creates and populates a data table,
         // instantiates the pie chart, passes in the data and
         // draws it.
@@ -34,7 +35,10 @@
                // ['Zucchini', 1],
                // ['Pepperoni', 2]
            // ]);
-           data.addRows([[${chartData}]]);
+           console.log([[${jsonBlob}]][code]);
+           console.log(data);
+           console.log(code);
+           data.addRows([[${jsonBlob}]][code]);
             // Set chart options
             var options = {'title':[[${chartTitle}]],
                 'width':400,
@@ -42,7 +46,15 @@
 
             // Instantiate and draw our chart, passing in some options.
             var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+            if ( code !== undefined){
             chart.draw(data, options);
+            }
+        }
+
+        function selectData(c){
+          console.log(c);
+          code = c;
+          drawChart();
         }
         </script>
 </head>
@@ -115,7 +127,7 @@
     <th>Code</th>
     <th>Display</th>
   </tr>
-  <tr th:each="obs : ${observations}">
+  <tr th:each="obs : ${observations}" th:arg = "${obs.getCode()}"  th:onclick="javascript:selectData(this.getAttribute('arg'));">
     <td th:text="${obs.getId()}"></td>
     <td th:text="${obs.getDate()}"></td>
     <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getValue()}"></td></th:block>
