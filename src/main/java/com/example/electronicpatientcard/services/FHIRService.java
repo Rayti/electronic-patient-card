@@ -113,8 +113,8 @@ public class FHIRService {
                 .collect(Collectors.toList());
     }
 
-    public List<SimpleObservation> getObservations(String id, String code) {
-        return getObservations(id)
+    public List<SimpleObservation> getObservations(String id, String code, List<SimpleObservation> data) {
+        return data
                 .stream()
                 .filter(simpleObservation -> simpleObservation.getCodingDisplays().get(0).getCode().equalsIgnoreCase(code))
                 .collect(Collectors.toList());
@@ -166,8 +166,8 @@ public class FHIRService {
                 .collect(Collectors.toList());
     }
 
-    public List<List<Object>> getPlotObservationData(String patient, String code) {
-        List<SimpleObservation> observations = getObservations(patient, code);
+    public List<List<Object>> getPlotObservationData(String patient, String code, List<SimpleObservation> data) {
+        List<SimpleObservation> observations = getObservations(patient, code, data);
         List<List<Object>> result = new ArrayList<>();
         for (SimpleObservation observation : observations
         ) {
@@ -178,14 +178,13 @@ public class FHIRService {
         return result;
     }
 
-    public Map<String, List<List<Object>>> getPlotObservationData(String patient) {
-        List<SimpleObservation> simpleObservations = getObservations(patient);
+    public Map<String, List<List<Object>>> getPlotObservationData(String patient, List<SimpleObservation> simpleObservations) {
         Map<String, List<List<Object>>> jsonResult = new HashMap<>();
         for (SimpleObservation simpleObservation :
                 simpleObservations) {
             String code = simpleObservation.getCode();
             if (jsonResult.get(code) == null) {
-                List<List<Object>> observations = getPlotObservationData(patient, code);
+                List<List<Object>> observations = getPlotObservationData(patient, code, simpleObservations);
                 jsonResult.put(code, observations);
             }
         }
