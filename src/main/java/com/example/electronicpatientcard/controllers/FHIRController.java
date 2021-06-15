@@ -1,14 +1,12 @@
 package com.example.electronicpatientcard.controllers;
 
 import com.example.electronicpatientcard.constants.Constant;
+import com.example.electronicpatientcard.model.Cache;
 import com.example.electronicpatientcard.model.SimpleMedicationRequest;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
-import com.example.electronicpatientcard.model.SimplePatientCache;
-import com.example.electronicpatientcard.services.FHIRService;
-import com.example.electronicpatientcard.services.MedicationRequestConverter;
-import com.example.electronicpatientcard.services.ObservationConverter;
-import com.example.electronicpatientcard.services.PatientConverter;
+
+import com.example.electronicpatientcard.services.*;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
