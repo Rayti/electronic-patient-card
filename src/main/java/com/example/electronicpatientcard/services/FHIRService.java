@@ -8,6 +8,7 @@ import com.example.electronicpatientcard.constants.Constant;
 import com.example.electronicpatientcard.model.SimpleMedicationRequest;
 import com.example.electronicpatientcard.model.SimpleObservation;
 import com.example.electronicpatientcard.model.SimplePatient;
+import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,30 +42,27 @@ public class FHIRService {
                 .returnBundle(Bundle.class)
                 .execute();
 
-        return results.getEntry()
+        List<SimplePatient> simplePatientList = new ArrayList<>(bundleToSimplePatientList(results));
+
+        while (results.getLink(IBaseBundle.LINK_NEXT) != null) {
+            results = client
+                    .loadPage()
+                    .next(results)
+                    .execute();
+            simplePatientList.addAll(bundleToSimplePatientList(results));
+        }
+
+        return  simplePatientList;
+    }
+
+    private List<SimplePatient> bundleToSimplePatientList(Bundle result){
+        return result.getEntry()
                 .stream()
                 .map(bundleEntryComponent -> {
                     Patient patient = (Patient) bundleEntryComponent.getResource();
                     return patientConverter.convertPatientToSimplePatient(patient);
                 })
                 .collect(Collectors.toList());
-    }
-
-    public SimplePatient getPatient(String id) {
-        Bundle result = client
-                .search()
-                .forResource(Patient.class)
-                .where(Patient.LINK.hasId(id))
-                .returnBundle(Bundle.class)
-                .execute();
-
-        Optional<Bundle.BundleEntryComponent> optionalPatient = result.getEntry().stream().findFirst();
-
-        if (optionalPatient.isPresent()) {
-            Patient patient = (Patient) optionalPatient.get().getResource();
-            return patientConverter.convertPatientToSimplePatient(patient);
-        }
-        return null;
     }
 
     public List<SimplePatient> getPatientsWithNames(String name) {
@@ -81,7 +79,21 @@ public class FHIRService {
                 .returnBundle(Bundle.class)
                 .execute();
 
-        return result.getEntry().stream()
+        List<SimpleObservation> simpleObservationList = new ArrayList<>(bundleToSimpleObservationList(result));
+
+        while (result.getLink(IBaseBundle.LINK_NEXT) != null) {
+            result = client
+                    .loadPage()
+                    .next(result)
+                    .execute();
+            simpleObservationList.addAll(bundleToSimpleObservationList(result));
+        }
+
+        return simpleObservationList;
+    }
+
+    private List<SimpleObservation> bundleToSimpleObservationList(Bundle bundle){
+        return bundle.getEntry().stream()
                 .map(bundleEntryComponent -> {
                     Observation observation = (Observation) bundleEntryComponent.getResource();
                     return observationConverter.convertObservationToSimpleObservation(observation);
@@ -115,7 +127,22 @@ public class FHIRService {
                 .returnBundle(Bundle.class)
                 .execute();
 
-        return result.getEntry().stream()
+        List<SimpleMedicationRequest> simpleMedicationRequestList = new ArrayList<>(
+                bundleToSimpleMediactionRequest(result));
+
+        while (result.getLink(IBaseBundle.LINK_NEXT) != null) {
+            result = client
+                    .loadPage()
+                    .next(result)
+                    .execute();
+            simpleMedicationRequestList.addAll(bundleToSimpleMediactionRequest(result));
+        }
+
+        return simpleMedicationRequestList;
+    }
+
+    private List<SimpleMedicationRequest> bundleToSimpleMediactionRequest(Bundle bundle){
+        return bundle.getEntry().stream()
                 .map(bundleEntryComponent -> {
                     MedicationRequest mr = (MedicationRequest) bundleEntryComponent.getResource();
                     return medicationRequestConverter.convertMedicationRequestToSimpleMedicationRequest(mr);
