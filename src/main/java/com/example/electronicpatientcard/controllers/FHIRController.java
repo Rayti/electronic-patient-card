@@ -67,11 +67,6 @@ public class FHIRController {
 
 
 
-/*
-    TODO when no date provided on /patient/{id} and clicked submit -> ArithmeticException is thrown with info: "long overflow"
-        on line 90 or 96 depending on whether only start or end is passed
-*/
-
     @GetMapping("/patient/{id}")
     public String patientView(@PathVariable String id, Model model, @RequestParam(required = false) String start,
                               @RequestParam(required = false) String end) {
