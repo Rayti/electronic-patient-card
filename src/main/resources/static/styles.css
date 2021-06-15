@@ -144,6 +144,18 @@ input[type=submit]:hover{
     background-color: var(--celadon-blue);
 }
 
+h2 a {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+h2 form {
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
 @keyframes hover-from-right {
     0% {
         transform: translate(100px, 0px);
