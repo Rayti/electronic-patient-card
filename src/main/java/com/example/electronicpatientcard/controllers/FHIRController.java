@@ -97,8 +97,11 @@ public class FHIRController {
                 .findFirst();
 
         // todo: make this code to be selected by clicking
+
         List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7");
         model.addAttribute("chartData", plottedObservations);
+        model.addAttribute("chartTitle", "TEST DUPA TEST");
+        model.addAttribute("chartUnit", "TEST UNIT");
 
         if (optionalSimplePatient.isPresent()) {
             SimplePatient patient = optionalSimplePatient.get();
