@@ -111,8 +111,8 @@ public class FHIRController {
 
             List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7", simpleObservations);
             model.addAttribute("chartData", plottedObservations);
-            model.addAttribute("chartTitles", fhirService.getDisplays(id));
-            model.addAttribute("chartUnits", fhirService.getUnits(id));
+            model.addAttribute("chartTitles", fhirService.getDisplays(id, simpleObservations));
+            model.addAttribute("chartUnits", fhirService.getUnits(id, simpleObservations));
 
             model.addAttribute("observationsData", fhirService.getPlotObservationData(id, simpleObservations));
 

@@ -59,7 +59,7 @@ public class FHIRService {
                     .execute();
             simplePatientList.addAll(bundleToSimplePatientList(results));
         }
-
+        logger.info("Searching finished");
         return  simplePatientList;
     }
 
@@ -100,6 +100,7 @@ public class FHIRService {
                     .execute();
             simpleObservationList.addAll(bundleToSimpleObservationList(result));
         }
+        logger.info("Searching finished");
 
         return simpleObservationList;
     }
@@ -153,7 +154,7 @@ public class FHIRService {
                     .execute();
             simpleMedicationRequestList.addAll(bundleToSimpleMediactionRequest(result));
         }
-
+        logger.info("Searching finished");
         return simpleMedicationRequestList;
     }
 
@@ -191,21 +192,17 @@ public class FHIRService {
         return jsonResult;
     }
 
-    public Map<String, String> getDisplays(String patient) {
+    public Map<String, String> getDisplays(String patient, List<SimpleObservation> data) {
         Map<String, String> result = new HashMap<>();
-        List<SimpleObservation> simpleObservations = getObservations(patient);
-        for (SimpleObservation simpleObservation :
-                simpleObservations) {
+        for (SimpleObservation simpleObservation : data) {
             result.put(simpleObservation.getCode(), simpleObservation.getDisplay());
         }
         return result;
     }
 
-    public Map<String, String> getUnits(String patient) {
+    public Map<String, String> getUnits(String patient, List<SimpleObservation> data) {
         Map<String, String> result = new HashMap<>();
-        List<SimpleObservation> simpleObservations = getObservations(patient);
-        for (SimpleObservation simpleObservation :
-                simpleObservations) {
+        for (SimpleObservation simpleObservation : data) {
             result.put(simpleObservation.getCode(), simpleObservation.getUnit());
         }
         return result;
