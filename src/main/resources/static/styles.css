@@ -134,6 +134,12 @@ input[type=submit] {
     cursor: pointer;
 }
 
+div#chart_div {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
 input[type=submit]:hover{
     background-color: var(--celadon-blue);
 }

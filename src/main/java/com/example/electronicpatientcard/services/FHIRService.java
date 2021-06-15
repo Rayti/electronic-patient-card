@@ -34,23 +34,23 @@ public class FHIRService {
         this.client = context.newRestfulGenericClient(serverBase);
     }
 
-    public List<SimplePatient> getAllPatients(){
+    public List<SimplePatient> getAllPatients() {
         Bundle results = client
                 .search()
                 .forResource(Patient.class)
                 .returnBundle(Bundle.class)
                 .execute();
 
-        return  results.getEntry()
+        return results.getEntry()
                 .stream()
                 .map(bundleEntryComponent -> {
-                    Patient patient = (Patient)bundleEntryComponent.getResource();
+                    Patient patient = (Patient) bundleEntryComponent.getResource();
                     return patientConverter.convertPatientToSimplePatient(patient);
                 })
                 .collect(Collectors.toList());
     }
 
-    public SimplePatient getPatient(String id){
+    public SimplePatient getPatient(String id) {
         Bundle result = client
                 .search()
                 .forResource(Patient.class)
@@ -61,19 +61,19 @@ public class FHIRService {
         Optional<Bundle.BundleEntryComponent> optionalPatient = result.getEntry().stream().findFirst();
 
         if (optionalPatient.isPresent()) {
-            Patient patient = (Patient)optionalPatient.get().getResource();
+            Patient patient = (Patient) optionalPatient.get().getResource();
             return patientConverter.convertPatientToSimplePatient(patient);
         }
         return null;
     }
 
-    public List<SimplePatient> getPatientsWithNames(String name){
+    public List<SimplePatient> getPatientsWithNames(String name) {
         return this.getAllPatients().stream()
                 .filter(simplePatient -> simplePatient.getName().toUpperCase().contains(name))
                 .collect(Collectors.toList());
     }
 
-    public List<SimpleObservation> getObservations(String id){
+    public List<SimpleObservation> getObservations(String id) {
         Bundle result = client
                 .search()
                 .forResource(Observation.class)
@@ -83,17 +83,17 @@ public class FHIRService {
 
         return result.getEntry().stream()
                 .map(bundleEntryComponent -> {
-                    Observation observation = (Observation)bundleEntryComponent.getResource();
+                    Observation observation = (Observation) bundleEntryComponent.getResource();
                     return observationConverter.convertObservationToSimpleObservation(observation);
                 })
                 .collect(Collectors.toList());
     }
 
     public List<SimpleObservation> getObservations(String id, String code) {
-            return getObservations(id)
-                    .stream()
-                    .filter(simpleObservation -> simpleObservation.getCodingDisplays().get(0).getCode().equalsIgnoreCase(code))
-                    .collect(Collectors.toList());
+        return getObservations(id)
+                .stream()
+                .filter(simpleObservation -> simpleObservation.getCodingDisplays().get(0).getCode().equalsIgnoreCase(code))
+                .collect(Collectors.toList());
     }
 
     public List<SimpleObservation> getObservationsWithDateBoundaries(List<SimpleObservation> simpleObservations,
@@ -117,22 +117,36 @@ public class FHIRService {
 
         return result.getEntry().stream()
                 .map(bundleEntryComponent -> {
-                    MedicationRequest mr = (MedicationRequest)bundleEntryComponent.getResource();
+                    MedicationRequest mr = (MedicationRequest) bundleEntryComponent.getResource();
                     return medicationRequestConverter.convertMedicationRequestToSimpleMedicationRequest(mr);
                 })
                 .collect(Collectors.toList());
     }
 
-    public List<List<Object>> getPlotObservationData(String patient, String code){
+    public List<List<Object>> getPlotObservationData(String patient, String code) {
         List<SimpleObservation> observations = getObservations(patient, code);
-        Integer dateMock = 0;
         List<List<Object>> result = new ArrayList<>();
-        for (SimpleObservation observation: observations
-             ) {
-            result.add(Arrays.asList(dateMock.toString(), observation.getSimpleValueQuantity().getValue()));
-            dateMock++;
+        for (SimpleObservation observation : observations
+        ) {
+            result.add(Arrays.asList(DateHandler.parseToString(observation.getDate()),
+                    //observation.getValue() == null ? 2137 : observation.getValue()));
+                    observation.getValue()));
         }
         return result;
+    }
+
+    public Map<String, List<List<Object>>> getPlotObservationData(String patient) {
+        List<SimpleObservation> simpleObservations = getObservations(patient);
+        Map<String, List<List<Object>>> jsonResult = new HashMap<>();
+        for (SimpleObservation simpleObservation :
+                simpleObservations) {
+            String code = simpleObservation.getCode();
+            if (jsonResult.get(code) == null) {
+                List<List<Object>> observations = getPlotObservationData(patient, code);
+                jsonResult.put(code, observations);
+            }
+        }
+        return jsonResult;
     }
 
     @Autowired

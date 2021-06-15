@@ -91,12 +91,7 @@ public class FHIRController {
                 .filter(simplePatient -> simplePatient.getId().equalsIgnoreCase(id))
                 .findFirst();
 
-        // todo: make this code to be selected by clicking
 
-        List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7");
-        model.addAttribute("chartData", plottedObservations);
-        model.addAttribute("chartTitle", "TEST DUPA TEST");
-        model.addAttribute("chartUnit", "TEST UNIT");
 
         if (optionalSimplePatient.isPresent()) {
             SimplePatient patient = optionalSimplePatient.get();
@@ -112,6 +107,15 @@ public class FHIRController {
             model.addAttribute("patient", patient);
             model.addAttribute("startDate", DateHandler.parseToString(startDate));
             model.addAttribute("endDate", DateHandler.parseToString(endDate));
+            // todo: make this code to be selected by clicking
+
+            List<List<Object>> plottedObservations = fhirService.getPlotObservationData(id, "29463-7");
+            model.addAttribute("chartData", plottedObservations);
+            model.addAttribute("chartTitle", simpleObservations.get(0).getCodingDisplays().get(0).getDisplay());
+            model.addAttribute("chartUnit", simpleObservations.get(0).getSimpleValueQuantity().getUnit());
+
+            model.addAttribute("jsonBlob", fhirService.getPlotObservationData(id));
+
             return "patient";
         }
         model.addAttribute("msg", "Patient does not exist - server must have been updated.");
