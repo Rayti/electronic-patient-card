@@ -1,31 +1,137 @@
 package com.example.electronicpatientcard.services;
 
 import ca.uhn.fhir.context.FhirContext;
-import org.hl7.fhir.r4.model.MedicationStatement;
-import org.hl7.fhir.r4.model.Observation;
-import org.hl7.fhir.r4.model.Patient;
+
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.gclient.StringClientParam;
+import com.example.electronicpatientcard.constants.Constant;
+import com.example.electronicpatientcard.model.SimpleMedicationRequest;
+import com.example.electronicpatientcard.model.SimpleObservation;
+import com.example.electronicpatientcard.model.SimplePatient;
+import com.fasterxml.jackson.databind.ser.std.ObjectArraySerializer;
+import org.hl7.fhir.r4.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
 public class FHIRService {
 
-    private static FhirContext context = FhirContext.forR4();
+    private FhirContext context;
+    private IGenericClient client;
+    private String serverBase;
 
-    public Patient getPatientByName(String name){
+    private PatientConverter patientConverter;
+    private ObservationConverter observationConverter;
+    private MedicationRequestConverter medicationRequestConverter;
 
+
+    public FHIRService() {
+        this.context = FhirContext.forR4();
+        this.serverBase = Constant.LOCAL_SERVER_URL_R4;
+        this.client = context.newRestfulGenericClient(serverBase);
+    }
+
+    public List<SimplePatient> getAllPatients(){
+        Bundle results = client
+                .search()
+                .forResource(Patient.class)
+                .returnBundle(Bundle.class)
+                .execute();
+
+        return  results.getEntry()
+                .stream()
+                .map(bundleEntryComponent -> {
+                    Patient patient = (Patient)bundleEntryComponent.getResource();
+                    return patientConverter.convertPatientToSimplePatient(patient);
+                })
+                .collect(Collectors.toList());
+    }
+
+    public SimplePatient getPatient(String id){
+        Bundle result = client
+                .search()
+                .forResource(Patient.class)
+                .where(Patient.LINK.hasId(id))
+                .returnBundle(Bundle.class)
+                .execute();
+
+        Optional<Bundle.BundleEntryComponent> optionalPatient = result.getEntry().stream().findFirst();
+
+        if (optionalPatient.isPresent()) {
+            Patient patient = (Patient)optionalPatient.get().getResource();
+            return patientConverter.convertPatientToSimplePatient(patient);
+        }
         return null;
     }
 
-    public Observation getObservation(Patient patient){
-        return null;
+    public List<SimplePatient> getPatientsWithNames(String name){
+        return this.getAllPatients().stream()
+                .filter(simplePatient -> simplePatient.getName().toUpperCase().contains(name))
+                .collect(Collectors.toList());
     }
 
-    public MedicationStatement getMedicationStatement(Patient patient){
-        return null;
+    public List<SimpleObservation> getObservations(String id){
+        Bundle result = client
+                .search()
+                .forResource(Observation.class)
+                .where(Observation.SUBJECT.hasId("Patient/" + id))
+                .returnBundle(Bundle.class)
+                .execute();
+
+        return result.getEntry().stream()
+                .map(bundleEntryComponent -> {
+                    Observation observation = (Observation)bundleEntryComponent.getResource();
+                    return observationConverter.convertObservationToSimpleObservation(observation);
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<SimpleObservation> getObservationsWithDateBoundaries(List<SimpleObservation> simpleObservations,
+                                                                     Date start,
+                                                                     Date end) {
+        return simpleObservations
+                .stream()
+                .filter(simpleObservation ->
+                        simpleObservation.getDate().after(start) && simpleObservation.getDate().before(end))
+                .collect(Collectors.toList());
     }
 
 
+    public List<SimpleMedicationRequest> getMedicationRequest(String id) {
+        Bundle result = client
+                .search()
+                .forResource(MedicationRequest.class)
+                .where(MedicationRequest.SUBJECT.hasId("Patient/" + id))
+                .returnBundle(Bundle.class)
+                .execute();
+
+        return result.getEntry().stream()
+                .map(bundleEntryComponent -> {
+                    MedicationRequest mr = (MedicationRequest)bundleEntryComponent.getResource();
+                    return medicationRequestConverter.convertMedicationRequestToSimpleMedicationRequest(mr);
+                })
+                .collect(Collectors.toList());
+    }
 
 
+    @Autowired
+    public void setPatientConverter(PatientConverter patientConverter) {
+        this.patientConverter = patientConverter;
+    }
+
+    @Autowired
+    public void setObservationConverter(ObservationConverter observationConverter) {
+        this.observationConverter = observationConverter;
+    }
+
+    @Autowired
+    public void setMedicationRequestConverter(MedicationRequestConverter medicationRequestConverter) {
+        this.medicationRequestConverter = medicationRequestConverter;
+    }
 }

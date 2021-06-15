@@ -1,6 +1,5 @@
 package com.example.electronicpatientcard;
 
-import com.example.electronicpatientcard.services.TestService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,8 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ElectronicPatientCardApplication {
 
     public static void main(String[] args) {
-        TestService testService = new TestService();
-        testService.doTest();
         SpringApplication.run(ElectronicPatientCardApplication.class, args);
     }
 

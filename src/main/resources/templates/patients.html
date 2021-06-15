@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/styles.css"/>
+    <script src="https://kit.fontawesome.com/6f884c792c.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <title>Information</title>
+</head>
+<body>
+<header>
+    <div class="icon"><i class="fas fa-laptop-medical"></i></div>
+    <div>
+        <h1><a th:href="@{/}">Electronic Patient Card</a></h1>
+    </div>
+    <div>
+        <h3><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">About</a></h3>
+    </div>
+
+</header>
+
+<div id="nav">
+<h2><a th:href="@{/patients}">Patients</a></h2>
+<form action="/patients" method="get">
+    <input type="text"  id="name" name="name">
+    <input type="submit">
+</form>
+</div>
+
+<button th:onclick="@{window.location='/devcheck'}">Dev check</button>
+<table th:if="${patientsWithObservations != null}">
+    <tr>
+        <td th:text="'patients with observations amount = ' + ${patientsWithObservations.size()}"></td>
+    </tr>
+    <tr th:each="patientId : ${patientsWithObservations}" >
+        <td th:text="${patientId}"></td>
+    </tr>
+</table>
+
+
+<table>
+    <tr>
+        <th>No.</th>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Gender</th>
+        <th>Birth date</th>
+    </tr>
+    <tr th:each="patient, stat : ${patients}" th:onclick="@{window.location='/patient/{id}'(id=${patient.getId()})}">
+        <td th:text="${stat.count}"></td>
+        <td th:text="${patient.getId()}"></td>
+        <td th:text="${patient.getName()}"></td>
+        <td th:text="${patient.getGender()}"></td>
+        <td th:text="${patient.getBirthDate()}"></td>
+    </tr>
+</table>
+
+</body>
+</html>

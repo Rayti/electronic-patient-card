@@ -1,0 +1,154 @@
+:root {
+    --imperial-red: #e63946ff;
+    --honeydew: #f1faeeff;
+    --powder-blue: #a8dadcff;
+    --celadon-blue: #457b9dff;
+    --prussian-blue: #1d3557ff;
+}
+
+html, body {
+    font-family: 'Roboto', sans-serif;
+    /* background: linear-gradient(0deg, white, var(--powder-blue)); */
+    background: -webkit-gradient(linear, left top, left bottom, from(white), to(var(--powder-blue))) fixed;
+    margin: 0;
+    /* height: 100%; */
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: var(--prussian-blue);
+    /*animation-name: hover-from-right;
+        animation-duration: 2s;
+        */
+}
+
+header div {
+    display: flex;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 10px;
+}
+
+div.icon {
+    justify-content: flex-start;
+    align-items: center;
+}
+
+h1 {
+    justify-items: center;
+}
+
+div#nav {
+    display: flex;
+    justify-content: center;
+    align-self: center;
+}
+
+a:link {
+    text-decoration: none;
+    color: var(--prussian-blue)
+}
+
+a:visited {
+    text-decoration: none;
+    color: var(--prussian-blue)
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a:active {
+    text-decoration: none;
+    color: var(--prussian-blue)
+}
+
+h1 {
+    border-bottom: 3px solid var(--prussian-blue);
+}
+
+table {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    margin-right: auto;
+    animation: fadeIn;
+    animation-duration: 1s;
+    border-color: var(--prussian-blue);
+    border-style: ridge;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    width: fit-content;
+}
+
+.patient {
+    background-color: var(--honeydew);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+td, th {
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+tr:nth-child(even) {
+    background-color: white;
+}
+
+tr:nth-child(odd) {
+    background-color: var(--powder-blue);
+}
+
+tr:hover {
+    background-color: var(--celadon-blue);
+}
+
+tr:first-child {
+    background-color: var(--prussian-blue);
+    color: white;
+    font-weight: 500;
+    font-size: 1.3em;
+}
+
+.icon {
+    font-size: 4em;
+}
+
+input[type=submit] {
+    background-color: var(--prussian-blue);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover{
+    background-color: var(--celadon-blue);
+}
+
+@keyframes hover-from-right {
+    0% {
+        transform: translate(100px, 0px);
+        background-color: var(--celadon-blue);
+        opacity: 0%;
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pl-PL">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/styles.css"/>
+  <script src="https://kit.fontawesome.com/6f884c792c.js" crossorigin="anonymous"></script>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+  <title>Information</title>
+</head>
+<body>
+<header>
+  <div class="icon"><i class="fas fa-laptop-medical"></i></div>
+  <div>
+    <h1><a th:href="@{/}">Electronic Patient Card</a></h1>
+  </div>
+  <div>
+    <h3><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">About</a></h3>
+  </div>
+
+</header>
+
+
+
+<h2><a th:href="@{/patients}">Patients</a></h2>
+
+<div id="nav">
+  <form th:action="@{'{id}'(id=${patient.getId()})}" method="get">
+    <input type="date"  id="start" name="start" th:value="${startDate}">
+    <input type="date" id="end" name="end" th:value="${endDate}">
+    <input type="submit">
+  </form>
+</div>
+
+<table>
+  <tr>
+    <th colspan="2">Patient</th>
+  </tr>
+  <tr>
+    <th>Name</th>
+    <td th:text="${patient.getName()}"></td>
+  </tr>
+  <tr>
+    <th>Id</th>
+    <td th:text="${patient.getId()}"></td>
+  </tr>
+  <tr>
+    <th>Gender</th>
+    <td th:text="${patient.getGender()}"></td>
+  </tr>
+  <tr>
+    <th>Birth date</th>
+    <td th:text="${patient.getBirthDate()}"></td>
+  </tr>
+  <tr>
+    <th colspan="2">Identifiers</th>
+  </tr>
+  <tr>
+    <th>Code</th>
+    <th>Full name</th>
+  </tr>
+  <tr th:each="identifier: ${patient.getIdentifier()}">
+    <td th:text="${identifier.getValue()}"></td>
+    <td th:text="${identifier.getText()}"></td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="6">Observations</th>
+  </tr>
+  <tr>
+    <th>Id</th>
+    <th>Date</th>
+    <th>Value</th>
+    <th>Unit</th>
+    <th>Code</th>
+    <th>Display</th>
+  </tr>
+  <tr th:each="obs : ${observations}">
+    <td th:text="${obs.getId()}"></td>
+    <td th:text="${obs.getDate()}"></td>
+    <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getValue()}"></td></th:block>
+    <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>NaN</td></th:block>
+    <th:block th:if="${obs.getSimpleValueQuantity() != null}"><td th:text="${obs.getSimpleValueQuantity().getUnit()}"></td></th:block>
+    <th:block th:unless="${obs.getSimpleValueQuantity() != null}"><td>NaN</td></th:block>
+    <th:block th:each="coding : ${obs.getCodingDisplays()}">
+      <td th:text="${coding.getCode()}"></td>
+      <td th:text="${coding.getDisplay()}"></td>
+    </th:block>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <th colspan="2">Medication requests</th>
+  </tr>
+  <tr>
+    <th>No</th>
+    <th>Display</th>
+  </tr>
+  <tr th:each="medication, stat : ${medications}">
+    <td th:text="${stat.count}"></td>
+    <td th:each="display : ${medication.displays}" th:text="${display}"></td>
+  </tr>
+</table>
+
+<br>
+</body>
+</html>
